@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="homeNav" type="id"/>
+    <item name="searchNav" type="id"/>
+    <item name="favoriteNav" type="id"/>
+    <item name="cartNav" type="id"/>
+    <item name="profileNav" type="id"/>
+</resources>

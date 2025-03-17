@@ -1,0 +1,542 @@
+{
+  "Category": [
+    {
+      "Id": 0,
+      "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/cat1.png?alt=media&token=fff105d6-d9b6-4665-8be9-2d452ee014a5",
+      "Name": "Rau"
+    },
+    {
+      "Id": 1,
+      "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/cat2.png?alt=media&token=dbac361b-ae77-48b0-bdcb-3ec4e3f9695c",
+      "Name": "Hoa quả"
+    },
+    {
+      "Id": 2,
+      "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/cat3.png?alt=media&token=48cbb1cf-908b-43f2-a78e-05e09ff30896",
+      "Name": "Sữa"
+    },
+    {
+      "Id": 3,
+      "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/cat4.png?alt=media&token=b6ed91cd-9405-49cf-8080-658d2dded771",
+      "Name": "Đồ uống"
+    },
+    {
+      "Id": 4,
+      "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/cat5.png?alt=media&token=920bb547-e0c2-4b7b-b99b-af97dd8abc3a",
+      "Name": "Hạt"
+    }
+  ],
+    "Items": [
+      {
+        "CategoryId": 0,
+        "Description": "Rau xà lách tươi giòn rụm, giàu vitamin và khoáng chất, giúp thanh lọc cơ thể và duy trì sức khỏe.",
+        "Id": 0,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/xalach.jpg?alt=media&token=64a1a012-052c-425f-8787-ba41753e877f",
+        "LocationId": 1,
+        "Price": 3.5,
+        "Star": 4.5,
+        "Title": "Rau xà lách tươi"
+      },
+      {
+        "CategoryId": 0,
+        "Description": "Rau cải xanh giàu dinh dưỡng, hỗ trợ tiêu hóa và cung cấp nhiều chất xơ cho bữa ăn hàng ngày.",
+        "Id": 1,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/caixanh.jpg?alt=media&token=f869801c-5a76-4817-aae3-9274498ed4b2s",
+        "LocationId": 1,
+        "Price": 4.0,
+        "Star": 4.2,
+        "Title": "Rau cải xanh"
+      },
+      {
+        "CategoryId": 0,
+        "Description": "Rau muống tươi ngon, chứa nhiều vitamin A và C, lý tưởng cho các món canh và xào.",
+        "Id": 2,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/raumuong.jpg?alt=media&token=ebf6155e-f623-4551-af78-bb8336f166d7",
+        "LocationId": 1,
+        "Price": 3.8,
+        "Star": 4.3,
+        "Title": "Rau muống tươi"
+      },
+      {
+        "CategoryId": 0,
+        "Description": "Cải bó xôi mềm mịn, giàu sắt và khoáng chất, giúp bồi bổ sức khỏe mỗi ngày.",
+        "Id": 3,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/caiboxoi.jpg?alt=media&token=bb2bfc0a-67a4-4a3f-86bf-7be749cfba24",
+        "LocationId": 1,
+        "Price": 4.5,
+        "Star": 4.6,
+        "Title": "Cải bó xôi"
+      },
+      {
+        "CategoryId": 0,
+        "Description": "Bắp cải tươi, giòn ngọt, thích hợp dùng sống trong salad hoặc nấu canh bổ dưỡng.",
+        "Id": 4,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/bapcai.jpg?alt=media&token=6a569483-db0d-473e-98c6-3c032acdd249",
+        "LocationId": 1,
+        "Price": 3.9,
+        "Star": 4.4,
+        "Title": "Bắp cải tươi"
+      },
+      {
+        "CategoryId": 0,
+        "Description": "Rau mùi tươi thơm, góp phần làm tăng hương vị đặc trưng cho các món ăn truyền thống.",
+        "Id": 5,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/raumui.jpg?alt=media&token=5434c081-e220-44fb-a7a9-8bdbd5321255",
+        "LocationId": 1,
+        "Price": 2.5,
+        "Star": 4.1,
+        "Title": "Rau mùi tươi"
+      },
+      {
+        "CategoryId": 0,
+        "Description": "Rau dền giàu chất xơ và vitamin, hỗ trợ sức khỏe tim mạch và hệ tiêu hóa hiệu quả.",
+        "Id": 6,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/rauden.jpg?alt=media&token=c1634ed6-edda-4d9f-8777-7ffd95a736bb",
+        "LocationId": 1,
+        "Price": 3.2,
+        "Star": 4.0,
+        "Title": "Rau dền"
+      },
+      {
+        "CategoryId": 0,
+        "Description": "Rau diếp tươi mát, thơm ngon, là lựa chọn tuyệt vời cho món salad và gỏi rau.",
+        "Id": 7,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/raudiep.jpg?alt=media&token=453ab40b-cb50-4290-bcb8-00de3ba81f1b",
+        "LocationId": 1,
+        "Price": 3.0,
+        "Star": 4.3,
+        "Title": "Rau diếp"
+      },
+      {
+        "CategoryId": 0,
+        "Description": "Rau cần tây giàu vitamin K, giúp thanh lọc cơ thể và tăng cường sức khỏe toàn diện.",
+        "Id": 8,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/cantay.jpg?alt=media&token=8b3a4905-cb66-483f-a386-7d5da637516f",
+        "LocationId": 1,
+        "Price": 3.7,
+        "Star": 4.5,
+        "Title": "Rau cần tây"
+      },
+      {
+        "CategoryId": 0,
+        "Description": "Rau ngót xanh mát, giàu dinh dưỡng, thích hợp dùng trong các món ăn nhẹ hàng ngày.",
+        "Id": 9,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/raungot.jpg?alt=media&token=0362681d-0b34-405c-926b-4ac0e969cf2d",
+        "LocationId": 1,
+        "Price": 2.8,
+        "Star": 4.2,
+        "Title": "Rau ngót"
+      },
+      {
+        "CategoryId": 1,
+        "Description": "Táo đỏ tươi giòn ngọt, chứa nhiều vitamin và chất chống oxy hóa, tốt cho sức khỏe.",
+        "Id": 10,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/taodo.jpg?alt=media&token=a595a199-f96c-4375-8245-05ffac62e247",
+        "LocationId": 1,
+        "Price": 6.5,
+        "Star": 4.5,
+        "Title": "Táo đỏ tươi"
+      },
+      {
+        "CategoryId": 1,
+        "Description": "Chuối chín mềm mịn, cung cấp năng lượng tự nhiên và các khoáng chất cần thiết cho cơ thể.",
+        "Id": 11,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/chuoichin.jpg?alt=media&token=152b5f5e-c311-4492-85c9-df30d8d6ca9d",
+        "LocationId": 1,
+        "Price": 5.0,
+        "Star": 4.3,
+        "Title": "Chuối chín"
+      },
+      {
+        "CategoryId": 1,
+        "Description": "Cam tươi mọng nước, giàu vitamin C, giúp tăng cường hệ miễn dịch và làn da khỏe mạnh.",
+        "Id": 12,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/camtuoi.jpg?alt=media&token=f0a4bf05-bd6f-4488-aa3c-c1109dfe7834",
+        "LocationId": 1,
+        "Price": 7.0,
+        "Star": 4.6,
+        "Title": "Cam tươi"
+      },
+      {
+        "CategoryId": 1,
+        "Description": "Xoài chín ngọt, thơm phức với hương vị nhiệt đới, là lựa chọn tuyệt vời cho mùa hè.",
+        "Id": 13,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/xoaichin.jpg?alt=media&token=d069dd5b-8574-4d75-be6e-2ae0ba984f31",
+        "LocationId": 1,
+        "Price": 8.5,
+        "Star": 4.7,
+        "Title": "Xoài chín"
+      },
+      {
+        "CategoryId": 1,
+        "Description": "Nho tươi mọng nước, béo ngọt, chứa nhiều chất chống oxy hóa, tốt cho tim mạch.",
+        "Id": 14,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/nho.jpg?alt=media&token=4ffc31ca-1555-4b4f-9e21-88c2b45c7e00",
+        "LocationId": 1,
+        "Price": 9.0,
+        "Star": 4.4,
+        "Title": "Nho tươi"
+      },
+      {
+        "CategoryId": 1,
+        "Description": "Dưa hấu mát lạnh, ngọt lịm, giải khát hoàn hảo cho những ngày hè oi bức.",
+        "Id": 15,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/duahau.jpg?alt=media&token=dd99214c-0bf1-4be1-8de6-f0853879b645",
+        "LocationId": 1,
+        "Price": 6.0,
+        "Star": 4.2,
+        "Title": "Dưa hấu"
+      },
+      {
+        "CategoryId": 1,
+        "Description": "Quýt ngọt mọng, giàu vitamin C, dễ ăn và lý tưởng cho mùa se lạnh.",
+        "Id": 16,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/quyt.jpg?alt=media&token=65f415ea-f5b4-46d2-a090-29d3bcba3f1a",
+        "LocationId": 1,
+        "Price": 5.5,
+        "Star": 4.3,
+        "Title": "Quýt"
+      },
+      {
+        "CategoryId": 1,
+        "Description": "Lê chín mọng, mềm mại, giàu vitamin và khoáng chất, hỗ trợ tiêu hóa hiệu quả.",
+        "Id": 17,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/quale.jpg?alt=media&token=dea3084f-f287-4474-ac0f-aa367ad34ea2",
+        "LocationId": 1,
+        "Price": 7.5,
+        "Star": 4.4,
+        "Title": "Lê"
+      },
+      {
+        "CategoryId": 1,
+        "Description": "Ổi tươi giòn, giàu vitamin C, mang lại vị ngọt thanh mát cho bữa ăn của bạn.",
+        "Id": 18,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/quaoi.jpg?alt=media&token=6099164d-40fd-4ca4-9341-89c86933fd79",
+        "LocationId": 1,
+        "Price": 6.8,
+        "Star": 4.5,
+        "Title": "Ổi tươi"
+      },
+      {
+        "CategoryId": 1,
+        "Description": "Dứa chín mọng, thơm ngon với nhiều vitamin và enzyme tự nhiên hỗ trợ tiêu hóa.",
+        "Id": 19,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/quadua.jpg?alt=media&token=933dc22c-c40f-4ef7-ab35-dfebfb168e9a",
+        "LocationId": 1,
+        "Price": 8.0,
+        "Star": 4.6,
+        "Title": "Dứa"
+      },
+      {
+        "CategoryId": 2,
+        "Description": "Sữa tươi mát lạnh, giàu canxi, giúp phát triển xương và răng chắc khỏe.",
+        "Id": 20,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/suatuoi.jpg?alt=media&token=51d4f752-14ed-445b-af0a-625b01166dc4",
+        "LocationId": 1,
+        "Price": 10.0,
+        "Star": 4.7,
+        "Title": "Sữa tươi"
+      },
+      {
+        "CategoryId": 2,
+        "Description": "Sữa chua không đường với vị béo nhẹ, giàu probiotic, hỗ trợ hệ tiêu hóa và sức khỏe ruột.",
+        "Id": 21,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/suachua.jpg?alt=media&token=b008fa1f-439d-45c9-b643-6da128bcbb64",
+        "LocationId": 1,
+        "Price": 8.5,
+        "Star": 4.5,
+        "Title": "Sữa chua không đường"
+      },
+      {
+        "CategoryId": 2,
+        "Description": "Sữa hạt hạnh nhân tự nhiên, không chứa lactose, mang đến hương vị béo ngậy và dinh dưỡng cao.",
+        "Id": 22,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/suahat.jpg?alt=media&token=e5f5c79e-c5bb-4172-9db4-be0c0a339c48",
+        "LocationId": 1,
+        "Price": 12.0,
+        "Star": 4.6,
+        "Title": "Sữa hạt hạnh nhân"
+      },
+      {
+        "CategoryId": 2,
+        "Description": "Sữa đậu nành giàu protein và chất xơ, phù hợp với người ăn chay và duy trì sức khỏe.",
+        "Id": 23,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/suadau.jpg?alt=media&token=fb055634-52d5-41e9-9f72-ca49a061ee92",
+        "LocationId": 1,
+        "Price": 9.0,
+        "Star": 4.4,
+        "Title": "Sữa đậu nành"
+      },
+      {
+        "CategoryId": 2,
+        "Description": "Sữa chua trái cây mát lạnh, kết hợp vị chua nhẹ và ngọt dịu, lý tưởng cho bữa ăn nhẹ.",
+        "Id": 24,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/suachuahoaqua.jpg?alt=media&token=25595788-51fa-41bc-a36a-e193f651dd2e",
+        "LocationId": 1,
+        "Price": 11.0,
+        "Star": 4.7,
+        "Title": "Sữa chua trái cây"
+      },
+      {
+        "CategoryId": 2,
+        "Description": "Sữa bắp thơm ngon với hương vị tự nhiên, giàu chất xơ và vitamin, bổ sung năng lượng mỗi ngày.",
+        "Id": 25,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/suabap.jpg?alt=media&token=54ac181f-7ade-4225-9bcb-2857f997ea49",
+        "LocationId": 1,
+        "Price": 8.0,
+        "Star": 4.3,
+        "Title": "Sữa bắp"
+      },
+      {
+        "CategoryId": 2,
+        "Description": "Sữa tươi hữu cơ an toàn, không chứa chất bảo quản, giữ trọn hương vị và dinh dưỡng tự nhiên.",
+        "Id": 26,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/suatuoihuuco.jpg?alt=media&token=8c384924-c903-48e6-b668-5dd8f7826dcc",
+        "LocationId": 1,
+        "Price": 13.0,
+        "Star": 4.8,
+        "Title": "Sữa tươi hữu cơ"
+      },
+      {
+        "CategoryId": 2,
+        "Description": "Sữa đặc béo ngậy, thích hợp pha chế đồ uống và làm các món bánh ngọt truyền thống.",
+        "Id": 27,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/suadac.jpg?alt=media&token=58019030-f2ac-4eba-8b06-e61d7bc743fc",
+        "LocationId": 1,
+        "Price": 7.5,
+        "Star": 4.4,
+        "Title": "Sữa đặc"
+      },
+      {
+        "CategoryId": 2,
+        "Description": "Sữa tiệt trùng đảm bảo an toàn vệ sinh, giữ nguyên hương vị tươi ngon và dinh dưỡng cần thiết.",
+        "Id": 28,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/suatiettrung.jpg?alt=media&token=dc049990-ce62-46e6-9bab-074c3cdcfe58",
+        "LocationId": 1,
+        "Price": 9.5,
+        "Star": 4.5,
+        "Title": "Sữa tiệt trùng"
+      },
+      {
+        "CategoryId": 2,
+        "Description": "Sữa bột dinh dưỡng dễ pha chế, cung cấp đầy đủ vitamin và khoáng chất cho sự phát triển của cơ thể.",
+        "Id": 29,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/suabot.jpg?alt=media&token=12a819b8-3098-4cb0-8ee2-123c559b8774",
+        "LocationId": 1,
+        "Price": 14.0,
+        "Star": 4.6,
+        "Title": "Sữa bột dinh dưỡng"
+      },
+      {
+        "CategoryId": 3,
+        "Description": "Nước ép cam tươi mát, giàu vitamin C, giúp giải khát và tăng cường sức đề kháng tự nhiên.",
+        "Id": 30,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/nuocepcam.jpg?alt=media&token=d4c89477-3d57-4bcf-87d1-af3cf2068f8a",
+        "LocationId": 1,
+        "Price": 5.5,
+        "Star": 4.5,
+        "Title": "Nước ép cam"
+      },
+      {
+        "CategoryId": 3,
+        "Description": "Trà xanh thanh mát, chứa nhiều chất chống oxy hóa, hỗ trợ giảm căng thẳng và làm đẹp da.",
+        "Id": 31,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/traxanh.jpg?alt=media&token=4e8c82a5-326c-46c6-8053-1ebb5425169f",
+        "LocationId": 1,
+        "Price": 4.5,
+        "Star": 4.3,
+        "Title": "Trà xanh"
+      },
+      {
+        "CategoryId": 3,
+        "Description": "Sinh tố bơ mịn màng, béo ngậy, cung cấp năng lượng và dưỡng chất cho bữa sáng đầy năng động.",
+        "Id": 32,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/sinhtobo.jpg?alt=media&token=8b8ce93c-c404-464c-baf7-d1b42b5bda53",
+        "LocationId": 1,
+        "Price": 6.0,
+        "Star": 4.4,
+        "Title": "Sinh tố bơ"
+      },
+      {
+        "CategoryId": 3,
+        "Description": "Nước ngọt tự nhiên, không chất bảo quản, mang lại cảm giác mát lạnh và sảng khoái cho ngày mới.",
+        "Id": 33,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/nuocngottunhien.jpg?alt=media&token=8e2c89c2-630e-4581-88df-1b30b7369ce6",
+        "LocationId": 1,
+        "Price": 3.5,
+        "Star": 4.2,
+        "Title": "Nước ngọt tự nhiên"
+      },
+      {
+        "CategoryId": 3,
+        "Description": "Trà sữa trân châu đậm đà, kết hợp vị trà thơm và sữa béo ngậy, tạo nên hương vị độc đáo.",
+        "Id": 34,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/trasuatranchau.jpg?alt=media&token=5e04b3e1-7232-47a8-81cb-35352b795e0e",
+        "LocationId": 1,
+        "Price": 7.0,
+        "Star": 4.6,
+        "Title": "Trà sữa trân châu"
+      },
+      {
+        "CategoryId": 3,
+        "Description": "Cà phê sữa đá đậm đà, mát lạnh, là lựa chọn hoàn hảo cho những ngày nắng nóng oi bức.",
+        "Id": 35,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/caphesuada.jpg?alt=media&token=bb0df0ea-d6b5-425a-b5ee-90b6b078948d",
+        "LocationId": 1,
+        "Price": 6.5,
+        "Star": 4.5,
+        "Title": "Cà phê sữa đá"
+      },
+      {
+        "CategoryId": 3,
+        "Description": "Nước ép lựu giàu chất chống oxy hóa, hỗ trợ làm đẹp da và tăng cường sức khỏe tổng thể.",
+        "Id": 36,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/nuocepluu.jpg?alt=media&token=246ccec0-68bd-4d3c-b61a-077a46d58824",
+        "LocationId": 1,
+        "Price": 6.8,
+        "Star": 4.4,
+        "Title": "Nước ép lựu"
+      },
+      {
+        "CategoryId": 3,
+        "Description": "Nước ép dứa ngọt ngào, thơm mát, cung cấp vitamin và enzyme hỗ trợ tiêu hóa tự nhiên.",
+        "Id": 37,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/nuocepdua.jpg?alt=media&token=5c9fbd4c-a1bb-49bf-bf15-12d6694e3321",
+        "LocationId": 1,
+        "Price": 5.8,
+        "Star": 4.3,
+        "Title": "Nước ép dứa"
+      },
+      {
+        "CategoryId": 3,
+        "Description": "Trà đào nhẹ nhàng, kết hợp hương vị trà và đào, mang đến cảm giác thư giãn dễ chịu.",
+        "Id": 38,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/tradao.jpg?alt=media&token=ab6544b0-d37d-4824-9d02-059ebdf35195",
+        "LocationId": 1,
+        "Price": 7.2,
+        "Star": 4.5,
+        "Title": "Trà đào"
+      },
+      {
+        "CategoryId": 3,
+        "Description": "Nước chanh mát lạnh, giàu vitamin C, giúp giải khát và tăng cường sức khỏe một cách tự nhiên.",
+        "Id": 39,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/nuocchanh.jpg?alt=media&token=efc9e29c-afd8-4434-8b34-c2f6cddacf61",
+        "LocationId": 1,
+        "Price": 4.0,
+        "Star": 4.3,
+        "Title": "Nước chanh"
+      },
+      {
+        "CategoryId": 4,
+        "Description": "Hạt hạnh nhân giòn rụm, giàu protein và chất xơ, cung cấp năng lượng cho cả ngày dài.",
+        "Id": 40,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/hanhnhan.jpg?alt=media&token=b75753b2-489c-4e60-b574-ff5528027c71",
+        "LocationId": 1,
+        "Price": 8.0,
+        "Star": 4.7,
+        "Title": "Hạt hạnh nhân"
+      },
+      {
+        "CategoryId": 4,
+        "Description": "Hạt điều béo ngậy, chứa nhiều chất béo lành mạnh, tốt cho trí nhớ và sức khỏe tim mạch.",
+        "Id": 41,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/hatdieu.jpg?alt=media&token=bba27dd7-0e81-47fb-90d0-2f4d875b6906",
+        "LocationId": 1,
+        "Price": 9.0,
+        "Star": 4.6,
+        "Title": "Hạt điều"
+      },
+      {
+        "CategoryId": 4,
+        "Description": "Hạt óc chó giàu omega-3 và chất chống oxy hóa, hỗ trợ hoạt động não bộ và tăng cường trí nhớ.",
+        "Id": 42,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/hatoccho.jpg?alt=media&token=ab85003d-fbd8-4982-a12b-af945cae3714",
+        "LocationId": 1,
+        "Price": 10.0,
+        "Star": 4.8,
+        "Title": "Hạt óc chó"
+      },
+      {
+        "CategoryId": 4,
+        "Description": "Hạt hướng dương chứa nhiều vitamin E, giúp bảo vệ làn da và tăng cường hệ miễn dịch.",
+        "Id": 43,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/hathuongduong.jpg?alt=media&token=c3da25fc-46b3-49cd-84f4-c94fbe3e167c",
+        "LocationId": 1,
+        "Price": 7.5,
+        "Star": 4.5,
+        "Title": "Hạt hướng dương"
+      },
+      {
+        "CategoryId": 4,
+        "Description": "Hạt bí đỏ giàu chất xơ và khoáng chất, tốt cho hệ tiêu hóa và duy trì sức khỏe tổng thể.",
+        "Id": 44,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/hatbido.jpg?alt=media&token=a72c7855-7b4e-4cdc-baee-b2841b06a482",
+        "LocationId": 1,
+        "Price": 8.5,
+        "Star": 4.4,
+        "Title": "Hạt bí đỏ"
+      },
+      {
+        "CategoryId": 4,
+        "Description": "Hạt chia nhỏ bé nhưng giàu omega-3 và chất xơ, hỗ trợ sức khỏe tim mạch và tiêu hóa.",
+        "Id": 45,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/hatchia.jpg?alt=media&token=00133417-8b7a-4dc2-a2f8-604adb5c720a",
+        "LocationId": 1,
+        "Price": 6.0,
+        "Star": 4.3,
+        "Title": "Hạt chia"
+      },
+      {
+        "CategoryId": 4,
+        "Description": "Hạt dẻ cười thơm ngon, giòn tan, là món ăn nhẹ lý tưởng cho mọi lúc mọi nơi.",
+        "Id": 46,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/hatcuoi.jpg?alt=media&token=15423319-eab7-4157-b29e-4d8d79d2d914",
+        "LocationId": 1,
+        "Price": 7.0,
+        "Star": 4.2,
+        "Title": "Hạt dẻ cười"
+      },
+      {
+        "CategoryId": 4,
+        "Description": "Hạt phỉ béo ngậy, giàu chất xơ và vitamin, thích hợp dùng làm món ăn nhẹ hoặc gia vị trong nấu nướng.",
+        "Id": 47,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/hatphi.jpg?alt=media&token=5a4b3f17-454c-4202-85c3-f717e270a69d",
+        "LocationId": 1,
+        "Price": 8.2,
+        "Star": 4.5,
+        "Title": "Hạt phỉ"
+      },
+      {
+        "CategoryId": 4,
+        "Description": "Hạt mắc ca giòn, giàu protein và dinh dưỡng, giúp bổ sung năng lượng cho cơ thể một cách tự nhiên.",
+        "Id": 48,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/hatmacca.jpg?alt=media&token=37b2c66c-1d6c-47dc-be39-7140aab4addf",
+        "LocationId": 1,
+        "Price": 9.5,
+        "Star": 4.7,
+        "Title": "Hạt mắc ca"
+      },
+      {
+        "CategoryId": 4,
+        "Description": "Hạt sen tự nhiên, giàu chất xơ và chất chống oxy hóa, tốt cho tiêu hóa và làn da khỏe mạnh.",
+        "Id": 49,
+        "ImagePath": "https://firebasestorage.googleapis.com/v0/b/btlandroid-463a8.firebasestorage.app/o/hatsen.jpg?alt=media&token=7b076687-d1d3-4adf-b920-43607b3fd9e0",
+        "LocationId": 1,
+        "Price": 7.8,
+        "Star": 4.4,
+        "Title": "Hạt sen"
+      }
+    ],
+  
+  "Location": [
+    {
+      "Id": 0,
+      "loc": "Sing"
+    },
+    {
+      "Id": 1,
+      "loc": "Viet Nam"
+    }
+  ]
+}

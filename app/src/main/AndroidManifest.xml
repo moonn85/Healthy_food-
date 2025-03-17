@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/logohealthyapp"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.BTLAndroid"
+        tools:targetApi="31">
+        
+        <!-- Thêm khai báo cho EditProfileActivity -->
+        <activity
+            android:name=".Activity.EditProfileActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        
+        <!-- Thêm ProfileActivity -->
+        <activity
+            android:name=".Activity.ProfileActivity"
+            android:exported="false" />
+            
+        <!-- Thêm CategoryItemsActivity -->
+        <activity
+            android:name=".Activity.CategoryItemsActivity"
+            android:exported="false" />
+            
+        <!-- Khai báo các Activity mới -->
+        <activity
+            android:name=".Activity.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <!-- Add this inside the <application> tags in your AndroidManifest.xml -->
+        <activity
+            android:name=".Activity.DetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".Activity.BaseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.StartActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Activity.FavoriteActivity"
+            android:exported="false" />
+        <!-- Thêm vào phần activities trong thẻ application -->
+        <activity
+            android:name="com.example.btlandroid.Activity.AdminActivity"
+            android:exported="false" />
+        <!-- Thêm vào phần <application> trước </application> -->
+        <activity
+            android:name=".Activity.ProductManagementActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ProductEditActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.CartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.CheckoutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.OrderManagementActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.OrderDetailActivity"
+            android:exported="false" />
+
+        <activity android:name=".Activity.MyOrdersActivity"
+            android:exported="false" />
+
+        <activity 
+            android:name=".Activity.UserManagementActivity"
+            android:exported="false" />
+
+        <activity android:name=".Activity.UserListActivity" />
+        <activity android:name=".Activity.ChatActivity" />
+
+    </application>
+
+</manifest>

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1047136291784",
+    "firebase_url": "https://btlandroid-463a8-default-rtdb.firebaseio.com",
+    "project_id": "btlandroid-463a8",
+    "storage_bucket": "btlandroid-463a8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1047136291784:android:533d5795e70f38e57d4efd",
+        "android_client_info": {
+          "package_name": "com.example.btlandroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1047136291784-fke3o38p5pdr4mugib0lgbnrj4gr59u5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpTIuOg6j9RFkYDsuU4x3ZD_o-nWyNjH0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1047136291784-fke3o38p5pdr4mugib0lgbnrj4gr59u5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

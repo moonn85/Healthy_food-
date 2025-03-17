@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Healthy Mart</string>
+    <string name="intro_title">Healthy Mart</string>
+    <string name="title2">Bạn đang tìm kiếm một giải pháp ăn uống lành mạnh, tiện lợi và ngon miệng? Healthy Mart là ứng dụng giúp bạn dễ dàng đặt những bữa ăn dinh dưỡng, được chế biến từ nguyên liệu tươi sạch, ít dầu mỡ và tốt cho sức khỏe. </string>
+    <string name="start">Đăng nhập</string>
+    <string name="login">Bạn chưa có tài khoản ? <font color="yellow">Đăng ký</font></string>
+    <string name="title"><font color="yellow"> Ưu đãi lên tới 300K </font> </string>
+
+</resources>
