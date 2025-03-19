@@ -31,12 +31,12 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class BestdealAdapter extends RecyclerView.Adapter<BestdealAdapter.ViewHolder> {
-    ArrayList<ItemDomain> items;
+    private ArrayList<ItemDomain> items;
     Context context;
     private FirebaseUser currentUser;
 
     public BestdealAdapter(ArrayList<ItemDomain> items) {
-        this.items = items;
+        this.items = items != null ? items : new ArrayList<>();
         this.currentUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
@@ -50,35 +50,37 @@ public class BestdealAdapter extends RecyclerView.Adapter<BestdealAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ItemDomain item = items.get(position);
-        holder.binding.TitleTxt.setText(item.getTitle());
-        holder.binding.priceTxt.setText(item.getPrice() + "Vnd/Kg");
-        Glide.with(context)
-                .load(item.getImagePath())
-                .into(holder.binding.img);
-                
-        // Kiểm tra xem sản phẩm có trong danh sách yêu thích không
-        checkIfFavorite(item.getId(), holder);
+        if (holder.binding.TitleTxt != null && items != null && position < items.size()) {
+            ItemDomain item = items.get(position);
+            holder.binding.TitleTxt.setText(item.getTitle());
+            holder.binding.priceTxt.setText(item.getPrice() + "Vnd/Kg");
+            Glide.with(context)
+                    .load(item.getImagePath())
+                    .into(holder.binding.img);
+                    
+            // Kiểm tra xem sản phẩm có trong danh sách yêu thích không
+            checkIfFavorite(item.getId(), holder);
 
-        // Xử lý sự kiện click vào icon yêu thích
-        holder.binding.favBtn.setOnClickListener(v -> {
-            toggleFavorite(item, holder);
-        });
-                
-        // Thêm sự kiện click vào item
-        holder.itemView.setOnClickListener(v -> {
-            try {
-                // Log để debug
-                Log.d("BestdealAdapter", "Clicked on item: " + items.get(position).getTitle());
-                
-                Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra("item", items.get(position));
-                context.startActivity(intent);
-            } catch (Exception e) {
-                Log.e("BestdealAdapter", "Error starting DetailActivity: " + e.getMessage(), e);
-                Toast.makeText(context, "Không thể mở chi tiết sản phẩm", Toast.LENGTH_SHORT).show();
-            }
-        });
+            // Xử lý sự kiện click vào icon yêu thích
+            holder.binding.favBtn.setOnClickListener(v -> {
+                toggleFavorite(item, holder);
+            });
+                    
+            // Thêm sự kiện click vào item
+            holder.itemView.setOnClickListener(v -> {
+                try {
+                    // Log để debug
+                    Log.d("BestdealAdapter", "Clicked on item: " + items.get(position).getTitle());
+                    
+                    Intent intent = new Intent(context, DetailActivity.class);
+                    intent.putExtra("item", items.get(position));
+                    context.startActivity(intent);
+                } catch (Exception e) {
+                    Log.e("BestdealAdapter", "Error starting DetailActivity: " + e.getMessage(), e);
+                    Toast.makeText(context, "Không thể mở chi tiết sản phẩm", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     /**
@@ -164,7 +166,7 @@ public class BestdealAdapter extends RecyclerView.Adapter<BestdealAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return items != null ? items.size() : 0; // Null check
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

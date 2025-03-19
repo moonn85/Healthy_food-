@@ -80,8 +80,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         } else {
             // Nếu không có sẵn tổng tiền, tính lại từ các mặt hàng
             double calculatedTotal = 0;
-            if (order.getItems() != null) {
-                for (CartItem item : order.getItems().values()) {
+            if (order.getCartItems() != null) {
+                for (CartItem item : order.getCartItems().values()) {
                     if (item != null) {
                         calculatedTotal += item.getPrice() * item.getQuantity();
                     }

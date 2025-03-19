@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.btlandroid.Adapter.UserAdapter;
+import com.example.btlandroid.Model.Message; // Add this import
 import com.example.btlandroid.Model.User;
 import com.example.btlandroid.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,6 +23,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collections;
 
 public class UserListActivity extends AppCompatActivity implements UserAdapter.OnUserClickListener {
     private RecyclerView recyclerView;
@@ -73,42 +77,62 @@ public class UserListActivity extends AppCompatActivity implements UserAdapter.O
         DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("Chats");
 
         if (isAdmin) {
-            // Nếu là admin, hiển thị tất cả người dùng có tin nhắn, sắp xếp theo tin nhắn mới nhất
-            chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            chatRef.addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onDataChange(@NonNull DataSnapshot chatSnapshot) {
-                    List<String> userIdsWithMessages = new ArrayList<>();
-                    long latestTimestamp = 0;
-                    
-                    // Lọc ra các user có chat với admin
-                    for (DataSnapshot chat : chatSnapshot.getChildren()) {
-                        String chatId = chat.getKey();
-                        if (chatId != null && chatId.contains(currentUserId)) {
-                            String otherUserId = chatId.replace(currentUserId + "_", "")
-                                               .replace("_" + currentUserId, "");
-                            if (!otherUserId.equals(currentUserId)) {
-                                userIdsWithMessages.add(otherUserId);
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    // Map để lưu timestamp của tin nhắn cuối cùng cho mỗi user
+                    Map<String, UserWithLastMessage> userMessages = new HashMap<>();
+
+                    // Duyệt qua tất cả chat rooms
+                    for (DataSnapshot roomSnapshot : snapshot.getChildren()) {
+                        String roomId = roomSnapshot.getKey();
+                        if (roomId != null && roomId.contains(currentUserId)) {
+                            // Lấy ID của user khác từ room ID
+                            String otherUserId = roomId.replace(currentUserId + "_", "")
+                                    .replace("_" + currentUserId, "");
+
+                            // Lấy tin nhắn cuối cùng của room này
+                            Message lastMessage = null;
+                            long lastTimestamp = 0;
+                            for (DataSnapshot messageSnapshot : roomSnapshot.getChildren()) {
+                                Message message = messageSnapshot.getValue(Message.class);
+                                if (message != null && message.getTimestamp() > lastTimestamp) {
+                                    lastMessage = message;
+                                    lastTimestamp = message.getTimestamp();
+                                }
+                            }
+
+                            if (lastMessage != null) {
+                                userMessages.put(otherUserId, new UserWithLastMessage(otherUserId, lastTimestamp));
                             }
                         }
                     }
 
-                    // Lấy thông tin user từ danh sách ID
+                    // Lấy thông tin user và sắp xếp theo thời gian tin nhắn cuối
                     userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            userList.clear();
-                            for (String userId : userIdsWithMessages) {
-                                DataSnapshot userSnapshot = snapshot.child(userId);
+                            List<UserWithLastMessage> sortedUsers = new ArrayList<>();
+                            
+                            for (Map.Entry<String, UserWithLastMessage> entry : userMessages.entrySet()) {
+                                DataSnapshot userSnapshot = snapshot.child(entry.getKey());
                                 User user = userSnapshot.getValue(User.class);
-                                if (user != null && !user.isAdmin()) {
-                                    userList.add(user);
+                                if (user != null) {
+                                    entry.getValue().setUser(user);
+                                    sortedUsers.add(entry.getValue());
                                 }
                             }
-                            if (userList.isEmpty()) {
-                                Toast.makeText(UserListActivity.this, 
-                                    "Chưa có cuộc trò chuyện nào", 
-                                    Toast.LENGTH_SHORT).show();
+
+                            // Sắp xếp theo timestamp giảm dần
+                            Collections.sort(sortedUsers, (a, b) -> 
+                                Long.compare(b.getLastMessageTime(), a.getLastMessageTime()));
+
+                            // Cập nhật danh sách user
+                            userList.clear();
+                            for (UserWithLastMessage uwm : sortedUsers) {
+                                userList.add(uwm.getUser());
                             }
+                            
                             userAdapter.notifyDataSetChanged();
                         }
 
@@ -123,9 +147,6 @@ public class UserListActivity extends AppCompatActivity implements UserAdapter.O
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(UserListActivity.this, 
-                        "Lỗi: " + error.getMessage(), 
-                        Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -156,6 +177,30 @@ public class UserListActivity extends AppCompatActivity implements UserAdapter.O
                             Toast.LENGTH_SHORT).show();
                     }
                 });
+        }
+    }
+
+    // Class phụ trợ để sắp xếp user theo thời gian tin nhắn cuối
+    private static class UserWithLastMessage {
+        private String userId;
+        private User user;
+        private long lastMessageTime;
+
+        public UserWithLastMessage(String userId, long lastMessageTime) {
+            this.userId = userId;
+            this.lastMessageTime = lastMessageTime;
+        }
+
+        public void setUser(User user) {
+            this.user = user;
+        }
+
+        public User getUser() {
+            return user;
+        }
+
+        public long getLastMessageTime() {
+            return lastMessageTime;
         }
     }
 

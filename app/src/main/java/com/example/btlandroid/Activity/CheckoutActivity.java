@@ -180,7 +180,7 @@ public class CheckoutActivity extends AppCompatActivity {
         order.setTotalAmount(totalCartAmount + shippingFee);
         order.setStatus("Đang xử lý");
         order.setPaymentMethod(paymentMethod);
-        order.setItems(cartItems);
+        order.setCartItems(cartItems);
         order.setNote(note);
         
         // Lưu đơn hàng vào database

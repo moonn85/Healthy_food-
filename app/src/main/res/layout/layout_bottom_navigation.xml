@@ -32,7 +32,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:layout_margin="5dp"
-                    app:srcCompat="@drawable/btn_1" />
+                    app:srcCompat="@drawable/ic_home" />
 
                 <TextView
                     android:id="@+id/textViewHome"
@@ -61,7 +61,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:layout_margin="5dp"
-                    app:srcCompat="@drawable/btn_4" />
+                    app:srcCompat="@drawable/ic_search" />
 
                 <TextView
                     android:id="@+id/textViewTim"

@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.bumptech.glide.Glide;
 import com.example.btlandroid.Adapter.MessageAdapter;
 import com.example.btlandroid.Model.Message;
-import com.example.btlandroid.Model.User;
+import com.example.btlandroid.Domain.User;
 import com.example.btlandroid.R;
 import com.example.btlandroid.databinding.ActivityChatBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -33,9 +34,12 @@ public class ChatActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private ActivityChatBinding binding;
     private MessageAdapter messageAdapter;
-    private List<Message> messages;
+    private List<com.example.btlandroid.Model.Message> messages;
     private String currentUserId, otherUserId;
     private DatabaseReference chatRef;
+    private ValueEventListener userInfoListener;
+    private ValueEventListener messagesListener;
+    private DatabaseReference userRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,21 +127,82 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUserActiveStatus(true);
+        // Đánh dấu tất cả tin nhắn là đã đọc
+        if (chatRef != null) {
+            chatRef.orderByChild("receiverId").equalTo(currentUserId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            dataSnapshot.getRef().child("read").setValue(true);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {}
+                });
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        updateUserActiveStatus(false);
+    }
+
+    private void updateUserActiveStatus(boolean isOnline) {
+        if (currentUserId != null) {
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users")
+                    .child(currentUserId);
+            
+            if (isOnline) {
+                userRef.child("lastActive").setValue(ServerValue.TIMESTAMP);
+            } else {
+                userRef.child("lastActive").setValue(System.currentTimeMillis());
+            }
+        }
+    }
+
     private void loadUserInfo() {
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users")
+        userRef = FirebaseDatabase.getInstance().getReference("Users")
                 .child(otherUserId);
         
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        userInfoListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User user = snapshot.getValue(User.class);
-                if (user != null) {
-                    binding.userNameText.setText(user.getName());
-                    if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
-                        Glide.with(ChatActivity.this)
-                                .load(user.getProfileImage())
-                                .placeholder(R.drawable.user_placeholder)
-                                .into(binding.userAvatarImage);
+                if (!isDestroyed() && !isFinishing()) {
+                    User user = snapshot.getValue(User.class);
+                    if (user != null) {
+                        binding.userNameText.setText(user.getName());
+                        
+                        // Hiển thị trạng thái online/offline
+                        long lastActive = user.getLastActive();
+                        long currentTime = System.currentTimeMillis();
+                        long diffMinutes = (currentTime - lastActive) / (60 * 1000);
+                        
+                        String lastSeenText;
+                        if (diffMinutes < 1) {
+                            lastSeenText = "Online";
+                            binding.lastActiveText.setTextColor(getResources().getColor(R.color.green));
+                        } else if (diffMinutes < 60) {
+                            lastSeenText = "Lần cuối " + diffMinutes + " phút trước";
+                        } else if (diffMinutes < 24 * 60) {
+                            lastSeenText = "Lần cuối " + (diffMinutes / 60) + " giờ trước"; 
+                        } else {
+                            lastSeenText = "Lần cuối " + (diffMinutes / (24 * 60)) + " ngày trước";
+                        }
+                        binding.lastActiveText.setText(lastSeenText);
+                        
+                        if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
+                            Glide.with(ChatActivity.this)
+                                    .load(user.getProfileImage())
+                                    .placeholder(R.drawable.user_placeholder)
+                                    .into(binding.userAvatarImage);
+                        }
                     }
                 }
             }
@@ -146,32 +211,36 @@ public class ChatActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(ChatActivity.this, "Lỗi: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+        userRef.addValueEventListener(userInfoListener);
     }
 
     private void loadMessages() {
         String chatRoomId = getChatRoomId(currentUserId, otherUserId);
         chatRef = FirebaseDatabase.getInstance().getReference("Chats").child(chatRoomId);
         
-        chatRef.addValueEventListener(new ValueEventListener() {
+        messagesListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                messages.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Message message = dataSnapshot.getValue(Message.class);
-                    if (message != null) {
-                        messages.add(message);
+                if (!isDestroyed() && !isFinishing()) {
+                    messages.clear();
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Message message = dataSnapshot.getValue(Message.class);
+                        if (message != null) {
+                            messages.add(message);
+                        }
                     }
+                    messageAdapter.notifyDataSetChanged();
+                    binding.messagesRecyclerView.scrollToPosition(messages.size() - 1);
                 }
-                messageAdapter.notifyDataSetChanged();
-                binding.messagesRecyclerView.scrollToPosition(messages.size() - 1);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(ChatActivity.this, "Lỗi: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+        chatRef.addValueEventListener(messagesListener);
     }
 
     private void sendMessage() {
@@ -203,6 +272,17 @@ public class ChatActivity extends AppCompatActivity {
             return user1 + "_" + user2;
         } else {
             return user2 + "_" + user1;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (userInfoListener != null && userRef != null) {
+            userRef.removeEventListener(userInfoListener);
+        }
+        if (messagesListener != null && chatRef != null) {
+            chatRef.removeEventListener(messagesListener);
         }
     }
 }

@@ -11,6 +11,7 @@ public class ItemDomain implements Serializable {
     private int Id;
     private int CategoryId;
     private int LocationId;
+    private String category = "Tất cả";  // Initialize with default value
 
     public ItemDomain() {
 
@@ -80,6 +81,12 @@ public class ItemDomain implements Serializable {
         LocationId = locationId;
     }
 
+    public String getCategory() {
+        return category;
+    }
 
+    public void setCategory(String category) {
+        this.category = category;  
+    }
 }
 

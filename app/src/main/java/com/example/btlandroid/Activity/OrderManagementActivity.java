@@ -24,6 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.example.btlandroid.R;  // Add this import
+import com.example.btlandroid.Domain.CartItem;
+import java.util.HashMap;
+import java.util.Map;
+
 public class OrderManagementActivity extends AppCompatActivity {
 
     private ActivityOrderManagementBinding binding;
@@ -58,45 +63,42 @@ public class OrderManagementActivity extends AppCompatActivity {
     }
 
     private void setupTabLayout() {
+        String[] tabs = {"Tất cả", "Chờ xác nhận", "Đang giao", "Hoàn thành", "Đã hủy"};
+        String[] statuses = {"all", "pending", "shipping", "completed", "cancelled"};
+
         binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()) {
-                    case 0: // Tất cả
-                        loadOrders("all");
-                        break;
-                    case 1: // Đang xử lý
-                        loadOrders("processing");
-                        break;
-                    case 2: // Đang giao
-                        loadOrders("shipping");
-                        break;
-                    case 3: // Hoàn thành
-                        loadOrders("completed");
-                        break;
-                }
+                String status = statuses[tab.getPosition()];
+                loadOrders(status);
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
+            public void onTabUnselected(TabLayout.Tab tab) {}
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
+
+        // Set up SwipeRefreshLayout with color scheme
+        binding.swipeRefreshLayout.setColorSchemeColors(
+            getResources().getColor(R.color.yellow, getTheme())
+        );
+        
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> {
+            String status = statuses[binding.tabLayout.getSelectedTabPosition()];
+            loadOrders(status);
         });
     }
 
     private void loadOrders(String filter) {
         binding.progressBar.setVisibility(View.VISIBLE);
-        currentFilter = filter;
-        
+        binding.emptyTextView.setVisibility(View.GONE);
+
         Query query;
-        
-        // Thiết lập query dựa trên filter
         switch (filter) {
-            case "processing":
-                query = ordersRef.orderByChild("status").equalTo("Đang xử lý");
+            case "pending":
+                query = ordersRef.orderByChild("status").equalTo("Chờ xác nhận");
                 break;
             case "shipping":
                 query = ordersRef.orderByChild("status").equalTo("Đang giao hàng");
@@ -104,61 +106,67 @@ public class OrderManagementActivity extends AppCompatActivity {
             case "completed":
                 query = ordersRef.orderByChild("status").equalTo("Đã giao hàng");
                 break;
-            case "all":
+            case "cancelled":
+                query = ordersRef.orderByChild("status").equalTo("Đã hủy");
+                break;
             default:
-                query = ordersRef;
+                query = ordersRef.orderByChild("timestamp");
                 break;
         }
-        
-        query.addValueEventListener(new ValueEventListener() {
 
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                binding.progressBar.setVisibility(View.GONE);
-                List<OrderDomain> orderList = new ArrayList<>();
-                
+                List<OrderDomain> newOrderList = new ArrayList<>();
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    // Kiểm tra nếu dữ liệu là một ArrayList
-                    if (snapshot.getValue() instanceof ArrayList) {
-                        // Xử lý với ArrayList
-                        ArrayList<Object> arrayData = (ArrayList<Object>) snapshot.getValue();
-                        // Tạo đối tượng Order từ dữ liệu ArrayList
-                        OrderDomain order = convertArrayToOrder(arrayData, snapshot.getKey());
+                    try {
+                        // Use explicit type checking
+                        OrderDomain order = snapshot.getValue(OrderDomain.class);
                         if (order != null) {
-                            orderList.add(order);
-                        }
-                    } else {
-                        try {
-                            // Nếu dữ liệu là Map, có thể thử dùng cách tiếp cận thông thường
-                            Map<String, Object> orderMap = (Map<String, Object>) snapshot.getValue();
-                            OrderDomain order = convertMapToOrder(orderMap, snapshot.getKey());
-                            if (order != null) {
-                                orderList.add(order);
+                            order.setOrderId(snapshot.getKey());
+                            
+                            // Handle items map with proper type checking
+                            if (snapshot.hasChild("items")) {
+                                Map<String, CartItem> itemsMap = new HashMap<>();
+                                DataSnapshot itemsSnapshot = snapshot.child("items");
+                                for (DataSnapshot itemSnapshot : itemsSnapshot.getChildren()) {
+                                    CartItem item = itemSnapshot.getValue(CartItem.class);
+                                    if (item != null) {
+                                        itemsMap.put(itemSnapshot.getKey(), item);
+                                    }
+                                }
+                                order.setItems(itemsMap);
                             }
-                        } catch (Exception e) {
-                            Log.e("ORDER_CONVERT", "Lỗi khi chuyển đổi dữ liệu: " + e.getMessage());
+                            
+                            newOrderList.add(order);
                         }
+                    } catch (Exception e) {
+                        Log.e("ORDER_CONVERT", "Error converting order: " + e.getMessage());
                     }
                 }
-                
-                if (orderList.isEmpty()) {
-                    binding.emptyTextView.setVisibility(View.VISIBLE);
-                } else {
-                    binding.emptyTextView.setVisibility(View.GONE);
-                    
-                    // Sắp xếp đơn hàng từ mới đến cũ (dựa trên timestamp)
-                    orderList.sort((o1, o2) -> Long.compare(o2.getTimestamp(), o1.getTimestamp()));
-                    
-                    // Cập nhật adapter với dữ liệu mới
-                    orderAdapter.setOrderList(orderList);
-                    orderAdapter.notifyDataSetChanged();
-                }
+
+                // Sort with type-safe comparison
+                newOrderList.sort((o1, o2) -> {
+                    if (o1 == null || o2 == null) return 0;
+                    return Long.compare(o2.getTimestamp(), o1.getTimestamp());
+                });
+
+                // Update adapter with the new list
+                orderAdapter.setOrderList(newOrderList);
+
+                // Update UI
+                binding.progressBar.setVisibility(View.GONE);
+                binding.swipeRefreshLayout.setRefreshing(false);
+                binding.emptyTextView.setVisibility(newOrderList.isEmpty() ? View.VISIBLE : View.GONE);
             }
-            
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 binding.progressBar.setVisibility(View.GONE);
-                Toast.makeText(OrderManagementActivity.this, "Lỗi: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                binding.swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(OrderManagementActivity.this, 
+                    "Lỗi: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

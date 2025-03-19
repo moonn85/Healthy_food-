@@ -8,9 +8,11 @@ public class Message {
     private long timestamp;
     private boolean isSeen;
     private String imageUrl;
+    private boolean isRead;  // Thêm field mới
 
     public Message() {
         // Constructor trống cho Firebase
+        this.isRead = false;
     }
 
     public Message(String messageId, String senderId, String receiverId, String content, long timestamp) {
@@ -21,6 +23,7 @@ public class Message {
         this.timestamp = timestamp;
         this.isSeen = false;
         this.imageUrl = null;
+        this.isRead = false;
     }
 
     // Thêm constructor cho tin nhắn hình ảnh
@@ -93,5 +96,14 @@ public class Message {
 
     public boolean hasImage() {
         return imageUrl != null && !imageUrl.isEmpty();
+    }
+
+    // Thêm getter/setter mới
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
     }
 }

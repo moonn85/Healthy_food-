@@ -1,8 +1,10 @@
 package com.example.btlandroid.Activity;
 
-import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -11,11 +13,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 
 import com.example.btlandroid.Domain.CartItem;
 import com.example.btlandroid.Domain.OrderDomain;
 import com.example.btlandroid.R;
 import com.example.btlandroid.databinding.ActivityOrderDetailBinding;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -88,25 +92,121 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         if (binding.adminActionsContainer != null) {
             binding.adminActionsContainer.setVisibility(View.VISIBLE);
-            
-            // Setup admin action buttons
-            binding.confirmBtn.setOnClickListener(v -> updateOrderStatus(order, "Đã xác nhận"));
-            binding.shippingBtn.setOnClickListener(v -> updateOrderStatus(order, "Đang giao hàng")); 
-            binding.deliveredBtn.setOnClickListener(v -> updateOrderStatus(order, "Đã giao hàng"));
-            binding.cancelBtn.setOnClickListener(v -> updateOrderStatus(order, "Đã hủy"));
+
+            // Xử lý hiển thị các nút dựa trên trạng thái
+            binding.confirmBtn.setVisibility(View.GONE);
+            binding.shippingBtn.setVisibility(View.GONE);
+            binding.deliveredBtn.setVisibility(View.GONE);
+            binding.cancelBtn.setVisibility(View.GONE);
+
+            switch (order.getStatus()) {
+                case "Chờ xác nhận":
+                    binding.confirmBtn.setVisibility(View.VISIBLE);
+                    binding.cancelBtn.setVisibility(View.VISIBLE);
+                    break;
+                case "Đã xác nhận":
+                    binding.shippingBtn.setVisibility(View.VISIBLE);
+                    binding.cancelBtn.setVisibility(View.VISIBLE);
+                    break;
+                case "Đang giao hàng":
+                    binding.deliveredBtn.setVisibility(View.VISIBLE);
+                    binding.cancelBtn.setVisibility(View.VISIBLE);
+                    break;
+                case "Đã giao hàng":
+                case "Đã hủy":
+                    binding.adminActionsContainer.setVisibility(View.GONE);
+                    break;
+            }
+
+            // Thêm sự kiện click cho các nút
+            binding.confirmBtn.setOnClickListener(v -> {
+                order.setStatus("Đã xác nhận");
+                updateOrderStatus(order);
+            });
+
+            binding.shippingBtn.setOnClickListener(v -> {
+                order.setStatus("Đang giao hàng");
+                updateOrderStatus(order);
+            });
+
+            binding.deliveredBtn.setOnClickListener(v -> {
+                order.setStatus("Đã giao hàng"); 
+                updateOrderStatus(order);
+            });
+
+            binding.cancelBtn.setOnClickListener(v -> {
+                showCancelConfirmDialog(order);
+            });
         }
     }
 
+    private void showCancelConfirmDialog(OrderDomain order) {
+        new AlertDialog.Builder(this)
+            .setTitle("Xác nhận hủy đơn")
+            .setMessage("Bạn có chắc chắn muốn hủy đơn hàng này?")
+            .setPositiveButton("Hủy đơn", (dialog, which) -> {
+                updateOrderStatus(order, "Đã hủy");
+            })
+            .setNegativeButton("Không", null)
+            .show();
+    }
+
     private void updateOrderStatus(OrderDomain order, String newStatus) {
+        // Replace ProgressDialog with MaterialAlertDialog
+        AlertDialog progressDialog = new MaterialAlertDialogBuilder(this)
+                .setView(R.layout.dialog_progress)
+                .setCancelable(false)
+                .create(); // Add create() before show()
+        progressDialog.show();
+
+        DatabaseReference orderRef = FirebaseDatabase.getInstance()
+            .getReference("Orders")
+            .child(order.getOrderId());
+
         orderRef.child("status").setValue(newStatus)
             .addOnSuccessListener(aVoid -> {
-                Toast.makeText(this, "Cập nhật trạng thái thành công", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
                 binding.statusTextView.setText(newStatus);
                 setStatusColor(binding.statusTextView, newStatus);
+                setupAdminActions(order); // Cập nhật lại trạng thái các nút
+                Toast.makeText(this, "Cập nhật trạng thái thành công", Toast.LENGTH_SHORT).show();
             })
             .addOnFailureListener(e -> {
+                progressDialog.dismiss();
                 Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
+    }
+
+    private void updateOrderStatus(OrderDomain order) {
+        // Replace ProgressDialog with MaterialAlertDialog
+        AlertDialog progressDialog = new MaterialAlertDialogBuilder(this)
+                .setView(R.layout.dialog_progress)
+                .setCancelable(false)
+                .create(); // Add create() before show()
+        progressDialog.show();
+
+        // Cập nhật trạng thái trong Firebase
+        DatabaseReference orderRef = FirebaseDatabase.getInstance()
+                .getReference("Orders")
+                .child(order.getOrderId());
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("status", order.getStatus());
+        updates.put("lastUpdated", System.currentTimeMillis());
+
+        orderRef.updateChildren(updates)
+                .addOnSuccessListener(aVoid -> {
+                    progressDialog.dismiss();
+                    // Cập nhật UI
+                    binding.statusTextView.setText(order.getStatus());
+                    setStatusColor(binding.statusTextView, order.getStatus());
+                    setupAdminActions(order);
+                    Toast.makeText(this, "Cập nhật trạng thái thành công", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void loadOrderDetails() {
@@ -127,9 +227,16 @@ public class OrderDetailActivity extends AppCompatActivity {
                     order.setPaymentMethod(snapshot.child("paymentMethod").getValue(String.class));
                     order.setNote(snapshot.child("note").getValue(String.class));
                     
-                    // Handle items separately
+                    // Handle items as Map
                     if (snapshot.hasChild("items")) {
-                        Map<String, Object> itemsMap = (Map<String, Object>) snapshot.child("items").getValue();
+                        Map<String, CartItem> itemsMap = new HashMap<>();
+                        for (DataSnapshot itemSnapshot : snapshot.child("items").getChildren()) {
+                            String key = itemSnapshot.getKey();
+                            CartItem item = itemSnapshot.getValue(CartItem.class);
+                            if (key != null && item != null) {
+                                itemsMap.put(key, item);
+                            }
+                        }
                         order.setItems(itemsMap);
                     }
 
@@ -143,10 +250,9 @@ public class OrderDetailActivity extends AppCompatActivity {
                         setupAdminActions(order);
                     }
                 } catch (Exception e) {
+                    Log.e("ORDER_DETAIL", "Error loading order: " + e.getMessage());
                     Toast.makeText(OrderDetailActivity.this, 
-                        "Lỗi khi tải thông tin đơn hàng: " + e.getMessage(), 
-                        Toast.LENGTH_SHORT).show();
-                    finish();
+                        "Lỗi khi tải thông tin đơn hàng", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -169,28 +275,28 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
     
     private void setStatusColor(TextView statusTextView, String status) {
+        int color;
         switch (status) {
-            case "Đang xử lý":
-                statusTextView.setBackgroundResource(R.drawable.grey_button_bg);
+            case "Chờ xác nhận":
+                color = getResources().getColor(R.color.grey, getTheme());
                 break;
             case "Đã xác nhận":
-                statusTextView.setBackgroundResource(R.drawable.blue_button_bg);
+                color = getResources().getColor(R.color.blue, getTheme());
                 break;
             case "Đang giao hàng":
-                statusTextView.setTextColor(Color.BLACK);
-                statusTextView.setBackgroundResource(R.drawable.yellow_bg);
+                color = getResources().getColor(R.color.yellow, getTheme());
                 break;
             case "Đã giao hàng":
-                statusTextView.setTextColor(Color.WHITE);
-                statusTextView.setBackgroundResource(R.drawable.green_button_bg);
+                color = getResources().getColor(R.color.green, getTheme());
                 break;
             case "Đã hủy":
-                statusTextView.setBackgroundResource(R.drawable.red_button_bg);
+                color = getResources().getColor(R.color.red, getTheme());
                 break;
             default:
-                statusTextView.setBackgroundResource(R.drawable.grey_button_bg);
+                color = getResources().getColor(R.color.grey, getTheme());
                 break;
         }
+        statusTextView.setBackgroundTintList(ColorStateList.valueOf(color));
     }
 
     private void displayCustomerInfo(OrderDomain order) {
@@ -211,7 +317,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         LinearLayout container = binding.orderItemsContainer;
         container.removeAllViews();
         
-        Map<String, CartItem> items = order.getItems();
+        Map<String, CartItem> items = order.getCartItems();
         double totalAmount = 0;
         
         if (items != null && !items.isEmpty()) {

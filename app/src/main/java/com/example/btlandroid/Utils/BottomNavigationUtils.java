@@ -9,6 +9,7 @@ import com.example.btlandroid.Activity.CartActivity;
 import com.example.btlandroid.Activity.FavoriteActivity;
 import com.example.btlandroid.Activity.MainActivity;
 import com.example.btlandroid.Activity.ProfileActivity;
+import com.example.btlandroid.Activity.SearchActivity;
 import com.example.btlandroid.R;
 
 public class BottomNavigationUtils {
@@ -36,7 +37,12 @@ public class BottomNavigationUtils {
         // Setup Search navigation
         View searchNav = activity.findViewById(R.id.searchNav);
         searchNav.setOnClickListener(v -> {
-            ToastUtils.showToast(activity, "Chức năng đang phát triển");
+            if (!(activity instanceof SearchActivity)) {
+                activity.startActivity(new Intent(activity, SearchActivity.class));
+                if (!(activity instanceof MainActivity)) {
+                    activity.finish();
+                }
+            }
         });
 
         // Setup Favorite navigation
