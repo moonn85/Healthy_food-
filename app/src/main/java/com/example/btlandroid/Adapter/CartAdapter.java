@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.example.btlandroid.Domain.CartItem;
 import com.example.btlandroid.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -57,7 +58,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         
         // Tải hình ảnh sản phẩm
         Glide.with(context)
-                .load(item.getImagePath())
+                .load(item.getPicUrl()) // Sử dụng getPicUrl thay vì getImagePath
                 .placeholder(R.drawable.light_black_bg)
                 .error(R.drawable.grey_button_bg)
                 .into(holder.productImg);
@@ -65,13 +66,29 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         // Xử lý sự kiện giảm số lượng
         holder.minusBtn.setOnClickListener(v -> {
             if (item.getQuantity() > 1) {
-                updateItemQuantity(item, item.getQuantity() - 1);
+                int newQuantity = item.getQuantity() - 1;
+                item.setQuantity(newQuantity);
+                // Cập nhật tổng giá dựa trên số lượng mới
+                item.updateTotalPrice();
+                // Cập nhật trên Firebase
+                updateItemInDatabase(item);
+                // Thông báo cho CartActivity cập nhật tổng tiền
+                listener.onCartUpdated();
+                notifyItemChanged(position);
             }
         });
         
         // Xử lý sự kiện tăng số lượng
         holder.plusBtn.setOnClickListener(v -> {
-            updateItemQuantity(item, item.getQuantity() + 1);
+            int newQuantity = item.getQuantity() + 1;
+            item.setQuantity(newQuantity);
+            // Cập nhật tổng giá dựa trên số lượng mới
+            item.updateTotalPrice();
+            // Cập nhật trên Firebase
+            updateItemInDatabase(item);
+            // Thông báo cho CartActivity cập nhật tổng tiền
+            listener.onCartUpdated();
+            notifyItemChanged(position);
         });
         
         // Xử lý sự kiện xóa sản phẩm
@@ -84,7 +101,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference cartRef = FirebaseDatabase.getInstance().getReference("Cart")
                 .child(userId)
-                .child(String.valueOf(item.getId()));
+                .child(item.getProductId()); // Sử dụng productId thay vì getId
         
         // Cập nhật số lượng trên Firebase
         cartRef.child("quantity").setValue(newQuantity)
@@ -101,7 +118,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference cartRef = FirebaseDatabase.getInstance().getReference("Cart")
                 .child(userId)
-                .child(String.valueOf(item.getId()));
+                .child(item.getProductId()); // Sử dụng productId thay vì getId
         
         // Xóa sản phẩm khỏi giỏ hàng
         cartRef.removeValue()
@@ -115,6 +132,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                         }
                     }
                 });
+    }
+
+    private void updateItemInDatabase(CartItem item) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            DatabaseReference cartRef = FirebaseDatabase.getInstance().getReference("Cart")
+                    .child(currentUser.getUid()).child(item.getProductId());
+            cartRef.setValue(item);
+        }
     }
 
     @Override

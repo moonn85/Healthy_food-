@@ -1,30 +1,34 @@
 package com.example.btlandroid.Domain;
 
-public class FavoriteItem {
-    private int id;
+import java.io.Serializable;
+
+public class FavoriteItem implements Serializable {
+    private String productId;
     private String title;
     private double price;
-    private String imagePath;
-    private String timestamp;
+    private String picUrl;
+    private String dateAdded;
 
-    // Constructor rỗng cần thiết cho Firebase
+    // No-args constructor for Firebase
     public FavoriteItem() {
     }
 
-    public FavoriteItem(int id, String title, double price, String imagePath, String timestamp) {
-        this.id = id;
+    // Constructor with all fields as parameters
+    public FavoriteItem(String productId, String title, double price, String picUrl, String dateAdded) {
+        this.productId = productId;
         this.title = title;
         this.price = price;
-        this.imagePath = imagePath;
-        this.timestamp = timestamp;
+        this.picUrl = picUrl;
+        this.dateAdded = dateAdded;
     }
 
-    public int getId() {
-        return id;
+    // Getters and setters
+    public String getProductId() {
+        return productId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     public String getTitle() {
@@ -43,19 +47,29 @@ public class FavoriteItem {
         this.price = price;
     }
 
+    public String getPicUrl() {
+        return picUrl;
+    }
+
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
+    }
+
+    public String getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setDateAdded(String dateAdded) {
+        this.dateAdded = dateAdded;
+    }
+
+    // Method to get ID - returns productId for compatibility
+    public String getId() {
+        return productId;
+    }
+
+    // Method to get image path - returns picUrl for compatibility
     public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+        return picUrl;
     }
 }

@@ -3,51 +3,41 @@ package com.example.btlandroid.Domain;
 import java.io.Serializable;
 
 public class CartItem implements Serializable {
-    private Object id;
+    // Original properties with proper Firebase mapping names
+    private String productId;
     private String title;
     private double price;
-    private int quantity;
-    private String imagePath;
-    private double totalPrice;
-    private double itemTotal;
     private String picUrl;
-    private double star;
-
-    public CartItem() {
-        // Constructor rỗng cần thiết cho Firebase
-    }
+    private int quantity;
+    private double totalPrice;
     
-    // Thêm constructor với các tham số cần thiết cho DetailActivity
-    public CartItem(int id, String title, double price, String imagePath, int quantity) {
-        this.id = id;
+    // Additional properties to match Firebase database fields
+    private String id;          // For Firebase mapping
+    private String imagePath;   // For Firebase mapping
+
+    // No-args constructor cho Firebase
+    public CartItem() {
+    }
+
+    public CartItem(String productId, String title, double price, String picUrl, int quantity) {
+        this.productId = productId;
+        this.id = productId;    // Set id same as productId
         this.title = title;
         this.price = price;
-        this.imagePath = imagePath;
+        this.picUrl = picUrl;
+        this.imagePath = picUrl; // Set imagePath same as picUrl
         this.quantity = quantity;
-        // Tính toán tổng tiền luôn
         this.totalPrice = price * quantity;
-        this.itemTotal = price * quantity;
     }
 
-    // Có thể thêm constructor khác với Object id thay vì int
-    public CartItem(Object id, String title, double price, String imagePath, int quantity) {
-        this.id = id;
-        this.title = title;
-        this.price = price;
-        this.imagePath = imagePath;
-        this.quantity = quantity;
-        // Tính toán tổng tiền luôn
-        this.totalPrice = price * quantity;
-        this.itemTotal = price * quantity;
+    // Getters và Setters
+    public String getProductId() {
+        return productId;
     }
 
-    // Getters and setters
-    public Object getId() {
-        return id;
-    }
-
-    public void setId(Object id) {
-        this.id = id;
+    public void setProductId(String productId) {
+        this.productId = productId;
+        this.id = productId; // Keep productId and id in sync
     }
 
     public String getTitle() {
@@ -64,6 +54,17 @@ public class CartItem implements Serializable {
 
     public void setPrice(double price) {
         this.price = price;
+        // Cập nhật tổng giá khi giá thay đổi
+        this.totalPrice = price * quantity;
+    }
+
+    public String getPicUrl() {
+        return picUrl;
+    }
+
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
+        this.imagePath = picUrl; // Keep picUrl and imagePath in sync
     }
 
     public int getQuantity() {
@@ -72,14 +73,8 @@ public class CartItem implements Serializable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+        // Cập nhật tổng giá khi số lượng thay đổi
+        this.totalPrice = price * quantity;
     }
 
     public double getTotalPrice() {
@@ -90,28 +85,27 @@ public class CartItem implements Serializable {
         this.totalPrice = totalPrice;
     }
 
-    public double getItemTotal() {
-        // Trả về itemTotal nếu có, nếu không thì trả về totalPrice
-        return (itemTotal > 0) ? itemTotal : totalPrice;
+    // Phương thức tính tổng giá
+    public void updateTotalPrice() {
+        this.totalPrice = this.price * this.quantity;
+    }
+    
+    // Additional getters and setters for Firebase mapping
+    public String getId() {
+        return productId; // Return productId as id
     }
 
-    public void setItemTotal(double itemTotal) {
-        this.itemTotal = itemTotal;
+    public void setId(String id) {
+        this.id = id;
+        this.productId = id; // Keep productId and id in sync
     }
 
-    public String getPicUrl() {
-        return picUrl;
+    public String getImagePath() {
+        return picUrl; // Return picUrl as imagePath
     }
 
-    public void setPicUrl(String picUrl) {
-        this.picUrl = picUrl;
-    }
-
-    public double getStar() {
-        return star;
-    }
-
-    public void setStar(double star) {
-        this.star = star;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+        this.picUrl = imagePath; // Keep picUrl and imagePath in sync
     }
 }

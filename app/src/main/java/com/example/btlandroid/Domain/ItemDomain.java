@@ -88,5 +88,10 @@ public class ItemDomain implements Serializable {
     public void setCategory(String category) {
         this.category = category;  
     }
+
+    // Add this method to get productId as String (converting from int id)
+    public String getProductId() {
+        return String.valueOf(Id);
+    }
 }
 

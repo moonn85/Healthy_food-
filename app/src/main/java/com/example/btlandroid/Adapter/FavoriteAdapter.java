@@ -62,26 +62,28 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
         
         // Tải ảnh sản phẩm
         Glide.with(context)
-                .load(item.getImagePath())
+                .load(item.getPicUrl()) // Use getPicUrl() instead of getImagePath()
+                .placeholder(R.drawable.light_black_bg)
+                .error(R.drawable.grey_button_bg)
                 .into(holder.productImg);
         
         // Xử lý sự kiện khi nhấn vào sản phẩm
         holder.itemView.setOnClickListener(v -> {
             // Tạo ItemDomain mới từ FavoriteItem để đảm bảo tương thích với DetailActivity
             ItemDomain itemDomain = new ItemDomain();
-            itemDomain.setId(item.getId());
+            itemDomain.setId(Integer.parseInt(item.getProductId())); // Use productId and convert to int
             itemDomain.setTitle(item.getTitle());
             itemDomain.setPrice(item.getPrice());
-            itemDomain.setImagePath(item.getImagePath());
+            itemDomain.setImagePath(item.getPicUrl()); // Use getPicUrl() instead of getImagePath()
             
             Intent intent = new Intent(context, DetailActivity.class);
             intent.putExtra("item", itemDomain); // Truyền object ItemDomain
             
             // Thêm cả các thông tin riêng lẻ để đảm bảo tương thích với cả 2 cách
-            intent.putExtra("itemId", item.getId());
+            intent.putExtra("itemId", Integer.parseInt(item.getProductId())); // Use productId and convert to int
             intent.putExtra("title", item.getTitle());
             intent.putExtra("price", item.getPrice());
-            intent.putExtra("imagePath", item.getImagePath());
+            intent.putExtra("imagePath", item.getPicUrl()); // Use getPicUrl() instead of getImagePath()
             
             context.startActivity(intent);
         });
@@ -108,7 +110,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
         // Xóa từ Firebase
         DatabaseReference favoriteRef = FirebaseDatabase.getInstance().getReference("Favorites")
                 .child(currentUser.getUid())
-                .child(String.valueOf(item.getId()));
+                .child(item.getProductId()); // Use getProductId() instead of getId()
         
         favoriteRef.removeValue().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {

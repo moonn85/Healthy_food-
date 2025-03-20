@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.btlandroid.Adapter.UserAdapter;
-import com.example.btlandroid.Model.Message; // Add this import
+import com.example.btlandroid.Model.Message;
 import com.example.btlandroid.Model.User;
 import com.example.btlandroid.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,20 +26,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
+import java.util.Comparator;
 
 public class UserListActivity extends AppCompatActivity implements UserAdapter.OnUserClickListener {
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
     private List<User> userList;
     private boolean isAdmin = false;
+    private String currentUserId;
+    private DatabaseReference userRef;
+    private View progressBar; // Add a reference to progressBar
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
 
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        userRef = FirebaseDatabase.getInstance().getReference("Users");
+
         recyclerView = findViewById(R.id.userRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        
+        // Find progressBar view
+        progressBar = findViewById(R.id.progressBar);
         
         userList = new ArrayList<>();
         userAdapter = new UserAdapter(this, userList, this);
@@ -49,6 +59,35 @@ public class UserListActivity extends AppCompatActivity implements UserAdapter.O
         checkAdminStatus();
 
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
+        
+        // Set current user as online
+        updateUserOnlineStatus(true);
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUserOnlineStatus(true);
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        updateUserOnlineStatus(false);
+    }
+    
+    private void updateUserOnlineStatus(boolean isOnline) {
+        if (currentUserId != null) {
+            DatabaseReference userStatusRef = userRef.child(currentUserId);
+            if (isOnline) {
+                userStatusRef.child("online").setValue(true);
+            } else {
+                Map<String, Object> updates = new HashMap<>();
+                updates.put("online", false);
+                updates.put("lastActive", System.currentTimeMillis());
+                userStatusRef.updateChildren(updates);
+            }
+        }
     }
 
     private void checkAdminStatus() {
@@ -72,106 +111,105 @@ public class UserListActivity extends AppCompatActivity implements UserAdapter.O
     }
 
     private void loadUsers() {
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
-        DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("Chats");
+        // Safely show progress bar if it exists
+        if (progressBar != null) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
 
         if (isAdmin) {
-            chatRef.addValueEventListener(new ValueEventListener() {
+            // ...existing admin code...
+            userRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    // Map để lưu timestamp của tin nhắn cuối cùng cho mỗi user
-                    Map<String, UserWithLastMessage> userMessages = new HashMap<>();
-
-                    // Duyệt qua tất cả chat rooms
-                    for (DataSnapshot roomSnapshot : snapshot.getChildren()) {
-                        String roomId = roomSnapshot.getKey();
-                        if (roomId != null && roomId.contains(currentUserId)) {
-                            // Lấy ID của user khác từ room ID
-                            String otherUserId = roomId.replace(currentUserId + "_", "")
-                                    .replace("_" + currentUserId, "");
-
-                            // Lấy tin nhắn cuối cùng của room này
-                            Message lastMessage = null;
-                            long lastTimestamp = 0;
-                            for (DataSnapshot messageSnapshot : roomSnapshot.getChildren()) {
-                                Message message = messageSnapshot.getValue(Message.class);
-                                if (message != null && message.getTimestamp() > lastTimestamp) {
-                                    lastMessage = message;
-                                    lastTimestamp = message.getTimestamp();
-                                }
-                            }
-
-                            if (lastMessage != null) {
-                                userMessages.put(otherUserId, new UserWithLastMessage(otherUserId, lastTimestamp));
-                            }
+                    userList.clear();
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        User user = dataSnapshot.getValue(User.class);
+                        if (user != null && !user.getId().equals(currentUserId)) {
+                            // Ensure user ID is set
+                            String userId = dataSnapshot.getKey();
+                            user.setId(userId);
+                            userList.add(user);
                         }
                     }
-
-                    // Lấy thông tin user và sắp xếp theo thời gian tin nhắn cuối
-                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    
+                    // Sort users: online first, then by last active time
+                    Collections.sort(userList, new Comparator<User>() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            List<UserWithLastMessage> sortedUsers = new ArrayList<>();
-                            
-                            for (Map.Entry<String, UserWithLastMessage> entry : userMessages.entrySet()) {
-                                DataSnapshot userSnapshot = snapshot.child(entry.getKey());
-                                User user = userSnapshot.getValue(User.class);
-                                if (user != null) {
-                                    entry.getValue().setUser(user);
-                                    sortedUsers.add(entry.getValue());
-                                }
+                        public int compare(User u1, User u2) {
+                            if (u1.isOnline() && !u2.isOnline()) {
+                                return -1;
+                            } else if (!u1.isOnline() && u2.isOnline()) {
+                                return 1;
+                            } else {
+                                return Long.compare(u2.getLastActive(), u1.getLastActive());
                             }
-
-                            // Sắp xếp theo timestamp giảm dần
-                            Collections.sort(sortedUsers, (a, b) -> 
-                                Long.compare(b.getLastMessageTime(), a.getLastMessageTime()));
-
-                            // Cập nhật danh sách user
-                            userList.clear();
-                            for (UserWithLastMessage uwm : sortedUsers) {
-                                userList.add(uwm.getUser());
-                            }
-                            
-                            userAdapter.notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Toast.makeText(UserListActivity.this, 
-                                "Lỗi: " + error.getMessage(), 
-                                Toast.LENGTH_SHORT).show();
                         }
                     });
+                    
+                    userAdapter.notifyDataSetChanged();
+                    // Safely hide progress bar if it exists
+                    if (progressBar != null) {
+                        progressBar.setVisibility(View.GONE);
+                    }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
+                    // Safely hide progress bar if it exists
+                    if (progressBar != null) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                    Toast.makeText(UserListActivity.this, 
+                        "Lỗi: " + error.getMessage(), 
+                        Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
             // Nếu là user thường, chỉ tìm admin
             userRef.orderByChild("isAdmin").equalTo(true)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         userList.clear();
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             User user = dataSnapshot.getValue(User.class);
                             if (user != null) {
+                                String userId = dataSnapshot.getKey();
+                                user.setId(userId);
                                 userList.add(user);
                             }
                         }
+                        
+                        // Sort users: online first, then by last active time
+                        Collections.sort(userList, (u1, u2) -> {
+                            if (u1.isOnline() && !u2.isOnline()) {
+                                return -1;
+                            } else if (!u1.isOnline() && u2.isOnline()) {
+                                return 1;
+                            } else {
+                                return Long.compare(u2.getLastActive(), u1.getLastActive());
+                            }
+                        });
+                        
+                        userAdapter.notifyDataSetChanged();
+                        // Safely hide progress bar if it exists
+                        if (progressBar != null) {
+                            progressBar.setVisibility(View.GONE);
+                        }
+                        
                         if (userList.isEmpty()) {
                             Toast.makeText(UserListActivity.this, 
                                 "Không tìm thấy người bán", 
                                 Toast.LENGTH_SHORT).show();
                         }
-                        userAdapter.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
+                        // Safely hide progress bar if it exists
+                        if (progressBar != null) {
+                            progressBar.setVisibility(View.GONE);
+                        }
                         Toast.makeText(UserListActivity.this, 
                             "Lỗi: " + error.getMessage(), 
                             Toast.LENGTH_SHORT).show();

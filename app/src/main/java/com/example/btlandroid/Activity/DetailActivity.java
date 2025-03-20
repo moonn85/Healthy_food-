@@ -121,7 +121,7 @@ public class DetailActivity extends AppCompatActivity {
 
         // Tạo đối tượng CartItem mới
         CartItem cartItem = new CartItem(
-                item.getId(), 
+                String.valueOf(item.getId()), // Convert the int id to String for productId
                 item.getTitle(),
                 item.getPrice(),
                 item.getImagePath(),
@@ -132,7 +132,7 @@ public class DetailActivity extends AppCompatActivity {
         DatabaseReference cartRef = FirebaseDatabase.getInstance()
                 .getReference("Cart")
                 .child(currentUser.getUid())
-                .child(String.valueOf(item.getId()));
+                .child(String.valueOf(item.getId())); // Use getId() instead of getProductId()
 
         // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
         cartRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -186,7 +186,7 @@ public class DetailActivity extends AppCompatActivity {
 
         DatabaseReference favoriteRef = FirebaseDatabase.getInstance().getReference("Favorites")
                 .child(currentUser.getUid())
-                .child(String.valueOf(item.getId()));
+                .child(String.valueOf(item.getId())); // Use getId() instead of getProductId()
 
         favoriteRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -210,7 +210,7 @@ public class DetailActivity extends AppCompatActivity {
 
         DatabaseReference favoriteRef = FirebaseDatabase.getInstance().getReference("Favorites")
                 .child(currentUser.getUid())
-                .child(String.valueOf(item.getId()));
+                .child(String.valueOf(item.getId())); // Use getId() instead of getProductId()
         
         if (isFavorite) {
             // Remove from favorites
@@ -224,9 +224,12 @@ public class DetailActivity extends AppCompatActivity {
                 }
             });
         } else {
-
+            // Modify this part to correctly create the FavoriteItem object
+            // First let's create a variable to hold the ID as String
+            String productIdStr = String.valueOf(item.getId());
+            
             FavoriteItem favoriteItem = new FavoriteItem(
-                item.getId(),
+                productIdStr,  // Use the String variable instead of direct conversion
                 item.getTitle(),
                 item.getPrice(),
                 item.getImagePath(),

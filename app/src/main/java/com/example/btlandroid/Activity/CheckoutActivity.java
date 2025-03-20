@@ -109,7 +109,7 @@ public class CheckoutActivity extends AppCompatActivity {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     CartItem item = dataSnapshot.getValue(CartItem.class);
                     if (item != null) {
-                        cartItems.put(String.valueOf(item.getId()), item);
+                        cartItems.put(item.getProductId(), item); // Sử dụng getProductId thay vì getId
                     }
                 }
             }

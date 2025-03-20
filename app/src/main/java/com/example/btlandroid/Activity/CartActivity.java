@@ -98,6 +98,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     CartItem item = dataSnapshot.getValue(CartItem.class);
                     if (item != null) {
+                        // Đảm bảo totalPrice được tính đúng từ giá và số lượng
+                        item.setTotalPrice(item.getPrice() * item.getQuantity());
                         cartItems.add(item);
                         totalAmount += item.getTotalPrice();
                     }
@@ -162,12 +164,17 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     private void recalculateTotalAmount() {
         totalAmount = 0;
         for (CartItem item : cartItems) {
-            totalAmount += item.getTotalPrice();
+            // Đảm bảo tính tổng giá bằng giá sản phẩm nhân với số lượng
+            double itemTotal = item.getPrice() * item.getQuantity();
+            item.setTotalPrice(itemTotal);
+            totalAmount += itemTotal;
         }
         binding.totalPriceText.setText(formatter.format(totalAmount) + " đ");
 
         if (cartItems.isEmpty()) {
             binding.emptyTextView.setVisibility(View.VISIBLE);
+        } else {
+            binding.emptyTextView.setVisibility(View.GONE);
         }
     }
 }

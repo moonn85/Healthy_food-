@@ -6,6 +6,8 @@ public class User {
     private String email;
     private String profileImage;
     private boolean isAdmin;
+    private long lastActive; // Add lastActive field
+    private boolean isOnline; // Add online status field
 
     // Constructor rỗng cần thiết cho Firebase
     public User() {
@@ -17,6 +19,30 @@ public class User {
         this.email = email;
         this.profileImage = profileImage;
         this.isAdmin = false;
+        this.lastActive = System.currentTimeMillis(); // Initialize with current time
+        this.isOnline = false; // Default to offline
+    }
+
+    // Constructor with lastActive
+    public User(String id, String name, String email, String profileImage, long lastActive) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.profileImage = profileImage;
+        this.isAdmin = false;
+        this.lastActive = lastActive;
+        this.isOnline = false; // Default to offline
+    }
+
+    // Full constructor with all fields
+    public User(String id, String name, String email, String profileImage, boolean isAdmin, long lastActive, boolean isOnline) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.profileImage = profileImage;
+        this.isAdmin = isAdmin;
+        this.lastActive = lastActive;
+        this.isOnline = isOnline;
     }
 
     // Getters and Setters
@@ -58,5 +84,23 @@ public class User {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+    
+    // Add getter and setter for lastActive
+    public long getLastActive() {
+        return lastActive;
+    }
+
+    public void setLastActive(long lastActive) {
+        this.lastActive = lastActive;
+    }
+    
+    // Add getter and setter for online status
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean online) {
+        isOnline = online;
     }
 }

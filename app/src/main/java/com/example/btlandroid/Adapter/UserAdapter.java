@@ -52,11 +52,33 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         User user = users.get(position);
         holder.userName.setText(user.getName());
 
-        if (user.getProfileImage() != null) {
+        if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
             Glide.with(context)
                 .load(user.getProfileImage())
                 .placeholder(R.drawable.user_placeholder)
+                .error(R.drawable.user_placeholder) // Add error handler
                 .into(holder.userAvatar);
+        } else {
+            // Set default avatar if profile image is null
+            holder.userAvatar.setImageResource(R.drawable.user_placeholder);
+        }
+
+        // Display online status
+        if (user.isOnline()) {
+            holder.onlineStatus.setVisibility(View.VISIBLE);
+            holder.offlineStatus.setVisibility(View.GONE);
+        } else {
+            holder.onlineStatus.setVisibility(View.GONE);
+            holder.offlineStatus.setVisibility(View.VISIBLE);
+            
+            // Show last active time if user is offline
+            long lastActive = user.getLastActive();
+            if (lastActive > 0) {
+                String lastActiveTime = getLastActiveTimeFormatted(lastActive);
+                holder.offlineStatus.setText(lastActiveTime);
+            } else {
+                holder.offlineStatus.setText("Offline");
+            }
         }
 
         // Load tin nhắn cuối cùng
@@ -67,6 +89,33 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 listener.onUserClick(user);
             }
         });
+    }
+
+    // Format the last active time to a readable format
+    private String getLastActiveTimeFormatted(long lastActiveTimestamp) {
+        long now = System.currentTimeMillis();
+        long diff = now - lastActiveTimestamp;
+        
+        // Less than 1 minute
+        if (diff < 60000) {
+            return "Vừa online";
+        }
+        
+        // Less than 1 hour
+        if (diff < 3600000) {
+            int minutes = (int) (diff / 60000);
+            return minutes + " phút trước";
+        }
+        
+        // Less than 24 hours
+        if (diff < 86400000) {
+            int hours = (int) (diff / 3600000);
+            return hours + " giờ trước";
+        }
+        
+        // More than 24 hours
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+        return "Online " + sdf.format(new Date(lastActiveTimestamp));
     }
 
     private void loadLastMessage(ViewHolder holder, String userId) {
@@ -151,6 +200,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
         CircleImageView userAvatar;
         TextView userName, lastMessage, lastMessageTime;
+        View onlineStatus;
+        TextView offlineStatus;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -158,6 +209,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             userName = itemView.findViewById(R.id.userName);
             lastMessage = itemView.findViewById(R.id.lastMessage);
             lastMessageTime = itemView.findViewById(R.id.lastMessageTime);
+            onlineStatus = itemView.findViewById(R.id.onlineStatusIndicator);
+            offlineStatus = itemView.findViewById(R.id.offlineStatusText);
         }
     }
 
