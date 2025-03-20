@@ -2,6 +2,7 @@ package com.example.btlandroid.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,9 +116,13 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
         favoriteRef.removeValue().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 // Xóa khỏi danh sách hiển thị
-                favoriteItems.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, favoriteItems.size());
+                if (!favoriteItems.isEmpty() && position >= 0 && position < favoriteItems.size()) {
+                    favoriteItems.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, favoriteItems.size());
+                } else {
+                    Log.e("FavoriteAdapter", "Attempted to remove item from empty list or invalid position");
+                }
                 
                 // Thông báo cho Activity về thay đổi
                 if (onItemRemovedListener != null) {
