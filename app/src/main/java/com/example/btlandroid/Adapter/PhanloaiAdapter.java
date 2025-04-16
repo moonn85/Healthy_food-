@@ -16,6 +16,7 @@ import com.example.btlandroid.databinding.ViewholderPhanloaiBinding;
 
 import java.util.ArrayList;
 
+// Lớp PhanloaiAdapter để hiển thị danh sách phân loại trong ứng dụng Android
 public class PhanloaiAdapter extends RecyclerView.Adapter<PhanloaiAdapter.ViewHolder> {
     ArrayList<PhanloaiDomain> items;
     Context context;
@@ -31,6 +32,7 @@ public class PhanloaiAdapter extends RecyclerView.Adapter<PhanloaiAdapter.ViewHo
         ViewholderPhanloaiBinding binding=ViewholderPhanloaiBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
         return new ViewHolder(binding);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull PhanloaiAdapter.ViewHolder holder, int position) {

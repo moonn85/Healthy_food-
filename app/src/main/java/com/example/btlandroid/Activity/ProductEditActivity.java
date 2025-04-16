@@ -46,6 +46,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+//để thêm hoặc chỉnh sửa thông tin sản phẩm
+// sử dụng Firebase Realtime Database để lưu trữ thông tin sản phẩm
 public class ProductEditActivity extends AppCompatActivity {
 
     private ImageButton backBtn;

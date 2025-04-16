@@ -29,6 +29,7 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+// Lớp UserAdapter để hiển thị danh sách người dùng trong ứng dụng Android
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private Context context;
     private List<User> users;

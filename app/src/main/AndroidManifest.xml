@@ -110,6 +110,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".Activity.IncomeStatisticsActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

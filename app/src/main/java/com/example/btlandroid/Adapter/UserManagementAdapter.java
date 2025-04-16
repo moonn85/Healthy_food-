@@ -31,6 +31,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+// Lớp UserManagementAdapter để quản lý danh sách người dùng trong ứng dụng Android
 public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAdapter.ViewHolder> {
 
     private List<User> userList;
@@ -90,9 +91,15 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
             userRef.removeValue()
                     .addOnSuccessListener(aVoid -> {
                         int position = userList.indexOf(user);
-                        userList.remove(position);
-                        notifyItemRemoved(position);
-                        Toast.makeText(context, "Đã xóa người dùng", Toast.LENGTH_SHORT).show();
+                        if (position >= 0) {
+                            userList.remove(position);
+                            notifyItemRemoved(position);
+                            Toast.makeText(context, "Đã xóa người dùng", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Người dùng không còn trong danh sách, làm mới toàn bộ adapter
+                            Toast.makeText(context, "Đã xóa người dùng. Đang làm mới danh sách...", Toast.LENGTH_SHORT).show();
+                            notifyDataSetChanged();
+                        }
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(context, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();

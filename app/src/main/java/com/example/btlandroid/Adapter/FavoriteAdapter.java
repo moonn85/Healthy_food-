@@ -26,6 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.DecimalFormat;
 import java.util.List;
 
+// Đây là một lớp FavoriteAdapter trong ứng dụng Android, được sử dụng để hiển thị danh sách sản phẩm yêu thích của người dùng.
+// Nó kế thừa từ RecyclerView.Adapter và sử dụng ViewHolder để quản lý các item trong danh sách yêu thích.
 public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHolder> {
     private List<FavoriteItem> favoriteItems;
     private Context context;
@@ -36,6 +38,8 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
         void onItemRemoved();
     }
 
+    // Constructor của lớp FavoriteAdapter, nhận vào danh sách sản phẩm yêu thích và listener để thông báo khi một item bị xóa.
+    // Nó cũng khởi tạo FirebaseUser để xác định người dùng hiện tại.
     public FavoriteAdapter(List<FavoriteItem> favoriteItems, OnItemRemovedListener listener) {
         this.favoriteItems = favoriteItems;
         this.onItemRemovedListener = listener;

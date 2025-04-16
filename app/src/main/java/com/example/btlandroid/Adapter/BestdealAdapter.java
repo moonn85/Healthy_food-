@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
+// để hiển thị danh sách sản phẩm trong ứng dụng Android
 public class BestdealAdapter extends RecyclerView.Adapter<BestdealAdapter.ViewHolder> {
     private ArrayList<ItemDomain> items;
     Context context;
@@ -40,6 +41,8 @@ public class BestdealAdapter extends RecyclerView.Adapter<BestdealAdapter.ViewHo
         this.currentUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
+    // Phương thức này được gọi khi RecyclerView cần tạo một ViewHolder mới
+    // để hiển thị một item trong danh sách
     @NonNull
     @Override
     public BestdealAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -48,6 +51,7 @@ public class BestdealAdapter extends RecyclerView.Adapter<BestdealAdapter.ViewHo
         return new ViewHolder(binding);
     }
 
+    // Phương thức này được gọi khi RecyclerView cần gán dữ liệu cho một ViewHolder đã tồn tại
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if (holder.binding.TitleTxt != null && items != null && position < items.size()) {
@@ -86,7 +90,7 @@ public class BestdealAdapter extends RecyclerView.Adapter<BestdealAdapter.ViewHo
     /**
      * Kiểm tra xem sản phẩm có trong danh sách yêu thích không
      */
-    private void checkIfFavorite(int itemId, ViewHolder holder) {
+    private void checkIfFavorite(long itemId, ViewHolder holder) {
         if (currentUser == null) return;
 
         DatabaseReference favoriteRef = FirebaseDatabase.getInstance().getReference("Favorites")

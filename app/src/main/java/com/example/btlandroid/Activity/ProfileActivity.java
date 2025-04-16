@@ -27,6 +27,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.example.btlandroid.Utils.ToastUtils;
 import com.squareup.picasso.Picasso;
 
+// để hiển thị thông tin người dùng và cho phép họ chỉnh sửa hồ sơ của mình
+// sử dụng Firebase để lưu trữ thông tin người dùng
 public class ProfileActivity extends AppCompatActivity {
     private ActivityProfileBinding binding;
     private FirebaseAuth mAuth;

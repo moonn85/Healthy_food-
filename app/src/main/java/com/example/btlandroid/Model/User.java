@@ -23,7 +23,7 @@ public class User {
         this.isOnline = false; // Default to offline
     }
 
-    // Constructor with lastActive
+ 
     public User(String id, String name, String email, String profileImage, long lastActive) {
         this.id = id;
         this.name = name;
@@ -31,10 +31,9 @@ public class User {
         this.profileImage = profileImage;
         this.isAdmin = false;
         this.lastActive = lastActive;
-        this.isOnline = false; // Default to offline
+        this.isOnline = false; 
     }
 
-    // Full constructor with all fields
     public User(String id, String name, String email, String profileImage, boolean isAdmin, long lastActive, boolean isOnline) {
         this.id = id;
         this.name = name;

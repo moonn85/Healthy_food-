@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Collections;
 import java.util.Comparator;
 
+// để hiển thị danh sách người dùng trong ứng dụng
+// sử dụng Firebase Realtime Database để lưu trữ thông tin người dùng
 public class UserListActivity extends AppCompatActivity implements UserAdapter.OnUserClickListener {
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;

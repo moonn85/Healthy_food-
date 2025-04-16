@@ -22,6 +22,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.DecimalFormat;
 import java.util.List;
 
+// Đây là một lớp CartAdapter trong ứng dụng Android, được sử dụng để hiển thị danh sách sản phẩm trong giỏ hàng của người dùng.
+// Nó kế thừa từ RecyclerView.Adapter và sử dụng ViewHolder để quản lý các item trong danh sách giỏ hàng.
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private List<CartItem> cartItems;
@@ -39,6 +41,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         this.listener = listener;
     }
 
+    // Phương thức này được gọi khi RecyclerView cần tạo một ViewHolder mới để hiển thị một item trong danh sách
+    // Nó sẽ tạo một ViewHolder mới từ layout viewholder_cart_item.xml và trả về nó.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -133,7 +137,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     }
                 });
     }
-
+// Cập nhật thông tin sản phẩm trong Firebase
     private void updateItemInDatabase(CartItem item) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {

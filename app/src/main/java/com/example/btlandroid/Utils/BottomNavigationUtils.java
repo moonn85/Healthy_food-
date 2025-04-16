@@ -15,13 +15,13 @@ import com.example.btlandroid.R;
 public class BottomNavigationUtils {
 
     /**
-     * Sets up the bottom navigation for an activity
+     * Thiết lập điều hướng bottom navigation cho một activity
      *
-     * @param activity The current activity
-     * @param activeNavId The id of the active navigation item (R.id.homeNav, R.id.cartNav, etc.)
+     * @param activity Activity hiện tại
+     * @param activeNavId Id của navigation item đang được chọn (R.id.homeNav, R.id.cartNav, v.v.)
      */
     public static void setupBottomNavigation(Activity activity, int activeNavId) {
-        // Setup Home navigation
+        // Thiết lập điều hướng Trang chủ
         View homeNav = activity.findViewById(R.id.homeNav);
         TextView homeText = activity.findViewById(R.id.textViewHome);
         if (activeNavId == R.id.homeNav) {
@@ -34,7 +34,7 @@ public class BottomNavigationUtils {
             }
         });
 
-        // Setup Search navigation
+        // Thiết lập điều hướng Tìm kiếm
         View searchNav = activity.findViewById(R.id.searchNav);
         searchNav.setOnClickListener(v -> {
             if (!(activity instanceof SearchActivity)) {
@@ -45,7 +45,7 @@ public class BottomNavigationUtils {
             }
         });
 
-        // Setup Favorite navigation
+        // Thiết lập điều hướng Yêu thích
         View favoriteNav = activity.findViewById(R.id.favoriteNav);
         TextView favoriteText = activity.findViewById(R.id.textViewYeuthich);
         if (activeNavId == R.id.favoriteNav) {
@@ -58,7 +58,7 @@ public class BottomNavigationUtils {
             }
         });
 
-        // Setup Cart navigation
+        // Thiết lập điều hướng Giỏ hàng
         View cartNav = activity.findViewById(R.id.cartNav);
         TextView cartText = activity.findViewById(R.id.textViewGiohang);
         if (activeNavId == R.id.cartNav) {
@@ -71,7 +71,7 @@ public class BottomNavigationUtils {
             }
         });
 
-        // Setup Profile navigation
+        // Thiết lập điều hướng Hồ sơ
         View profileNav = activity.findViewById(R.id.profileNav);
         TextView profileText = activity.findViewById(R.id.textViewProfile);
         if (activeNavId == R.id.profileNav) {
@@ -80,7 +80,7 @@ public class BottomNavigationUtils {
         profileNav.setOnClickListener(v -> {
             if (!(activity instanceof ProfileActivity)) {
                 activity.startActivity(new Intent(activity, ProfileActivity.class));
-                // Don't finish here to allow returning to previous activity
+                // Không kết thúc activity ở đây để cho phép quay lại activity trước đó
             }
         });
     }

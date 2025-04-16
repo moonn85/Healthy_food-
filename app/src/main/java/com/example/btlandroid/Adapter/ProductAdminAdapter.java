@@ -29,6 +29,7 @@ import com.google.firebase.storage.StorageReference;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+// Lớp ProductAdminAdapter để hiển thị danh sách sản phẩm trong ứng dụng Android
 public class ProductAdminAdapter extends RecyclerView.Adapter<ProductAdminAdapter.ViewHolder> {
 
     private ArrayList<ProductDomain> products;

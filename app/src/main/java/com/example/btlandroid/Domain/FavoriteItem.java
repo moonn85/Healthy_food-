@@ -9,11 +9,11 @@ public class FavoriteItem implements Serializable {
     private String picUrl;
     private String dateAdded;
 
-    // No-args constructor for Firebase
+    // Constructor không tham số cho Firebase
     public FavoriteItem() {
     }
 
-    // Constructor with all fields as parameters
+    // Constructor có đầy đủ tham số cho tất cả các trường
     public FavoriteItem(String productId, String title, double price, String picUrl, String dateAdded) {
         this.productId = productId;
         this.title = title;
@@ -22,7 +22,7 @@ public class FavoriteItem implements Serializable {
         this.dateAdded = dateAdded;
     }
 
-    // Getters and setters
+
     public String getProductId() {
         return productId;
     }

@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+// Đây là một lớp MessageAdapter trong ứng dụng Android, được sử dụng để hiển thị danh sách tin nhắn trong một cuộc trò chuyện.
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
     private static final int MSG_TYPE_LEFT = 0;
     private static final int MSG_TYPE_RIGHT = 1;

@@ -3,3 +3,10 @@ plugins {
     alias(libs.plugins.android.application) apply false
     id("com.google.gms.google-services") version "4.4.0" apply false
 }
+
+allprojects {
+    // Remove or comment out the repositories block containing maven { ... }
+    // repositories {
+    //     maven { url = uri("https://jitpack.io") }
+    // }
+}

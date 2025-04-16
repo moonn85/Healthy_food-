@@ -19,7 +19,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-
+// dùng để hiển thị danh sách sản phẩm theo phân loại
 public class CategoryItemsActivity extends AppCompatActivity {
     
     private ActivityCategoryItemsBinding binding;
@@ -52,13 +52,15 @@ public class CategoryItemsActivity extends AppCompatActivity {
         // Thiết lập sự kiện cho nút Back
         binding.backBtn.setOnClickListener(v -> finish());
     }
-    
+    // Cài đặt RecyclerView
+    // Sử dụng GridLayoutManager để hiển thị sản phẩm theo dạng lưới
     private void setupRecyclerView() {
         itemAdapter = new BestdealAdapter(itemList);
         binding.itemsRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         binding.itemsRecyclerView.setAdapter(itemAdapter);
     }
-    
+    // Thiết lập sự kiện cho nút Back
+    // Khi người dùng nhấn nút Back, Activity sẽ đóng lại
     private void loadCategoryItems() {
         if (categoryId == -1) {
             Toast.makeText(this, "Không tìm thấy thông tin phân loại", Toast.LENGTH_SHORT).show();

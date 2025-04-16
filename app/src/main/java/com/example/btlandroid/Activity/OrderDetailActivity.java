@@ -32,6 +32,9 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.widget.ImageView;
+import com.bumptech.glide.Glide;
+
 public class OrderDetailActivity extends AppCompatActivity {
 
     private ActivityOrderDetailBinding binding;
@@ -82,13 +85,23 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
 
     private void setupAdminActions() {
-        if (binding.adminActionsContainer != null) {  // Use correct layout ID
+        // Hiển thị/ẩn phần hành động của admin dựa trên vai trò
+        if (binding.adminActionsContainer != null) {
             binding.adminActionsContainer.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        }
+        
+        // Hiển thị/ẩn phần hành động của người dùng dựa trên vai trò
+        if (binding.userActionsContainer != null) {
+            binding.userActionsContainer.setVisibility(isAdmin ? View.GONE : View.VISIBLE);
         }
     }
 
     private void setupAdminActions(OrderDomain order) {
-        if (!isAdmin) return;
+        if (!isAdmin) {
+            // Thiết lập hành động cho người dùng
+            setupUserActions(order);
+            return;
+        }
 
         if (binding.adminActionsContainer != null) {
             binding.adminActionsContainer.setVisibility(View.VISIBLE);
@@ -138,6 +151,35 @@ public class OrderDetailActivity extends AppCompatActivity {
                 showCancelConfirmDialog(order);
             });
         }
+    }
+    
+    private void setupUserActions(OrderDomain order) {
+        if (isAdmin) return;
+        
+        if (binding.userActionsContainer != null) {
+            // Chỉ hiển thị nút hủy đơn hàng khi đơn hàng đang ở trạng thái "Chờ xác nhận" hoặc "Đã xác nhận"
+            String status = order.getStatus();
+            boolean canCancel = "Chờ xác nhận".equals(status) || "Đã xác nhận".equals(status);
+            
+            binding.userActionsContainer.setVisibility(canCancel ? View.VISIBLE : View.GONE);
+            
+            if (canCancel) {
+                binding.userCancelBtn.setOnClickListener(v -> {
+                    showUserCancelConfirmDialog(order);
+                });
+            }
+        }
+    }
+    
+    private void showUserCancelConfirmDialog(OrderDomain order) {
+        new AlertDialog.Builder(this)
+            .setTitle("Xác nhận hủy đơn")
+            .setMessage("Bạn có chắc chắn muốn hủy đơn hàng này?")
+            .setPositiveButton("Hủy đơn", (dialog, which) -> {
+                updateOrderStatus(order, "Đã hủy");
+            })
+            .setNegativeButton("Không", null)
+            .show();
     }
 
     private void showCancelConfirmDialog(OrderDomain order) {
@@ -210,56 +252,141 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
 
     private void loadOrderDetails() {
-        orderRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Hiển thị loading
+        // ...existing code...
+        
+        orderRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                try {
-                    OrderDomain order = new OrderDomain();
-                    // Manually set fields from snapshot
-                    order.setOrderId(snapshot.child("orderId").getValue(String.class));
-                    order.setUserId(snapshot.child("userId").getValue(String.class));
-                    order.setUserName(snapshot.child("userName").getValue(String.class));
-                    order.setUserPhone(snapshot.child("userPhone").getValue(String.class));
-                    order.setUserEmail(snapshot.child("userEmail").getValue(String.class));
-                    order.setAddress(snapshot.child("address").getValue(String.class));
-                    order.setOrderDate(snapshot.child("orderDate").getValue(String.class));
-                    order.setStatus(snapshot.child("status").getValue(String.class));
-                    order.setPaymentMethod(snapshot.child("paymentMethod").getValue(String.class));
-                    order.setNote(snapshot.child("note").getValue(String.class));
-                    
-                    // Handle items as Map
-                    if (snapshot.hasChild("items")) {
-                        Map<String, CartItem> itemsMap = new HashMap<>();
-                        for (DataSnapshot itemSnapshot : snapshot.child("items").getChildren()) {
-                            String key = itemSnapshot.getKey();
-                            CartItem item = itemSnapshot.getValue(CartItem.class);
-                            if (key != null && item != null) {
-                                itemsMap.put(key, item);
-                            }
+                if (snapshot.exists()) {
+                    try {
+                        // Không sử dụng snapshot.getValue(OrderDomain.class) trực tiếp
+                        // Thay vào đó, tạo đối tượng OrderDomain và thiết lập thủ công
+                        OrderDomain order = new OrderDomain();
+                        order.setOrderId(orderId);
+                        
+                        // Lấy các trường dữ liệu từ snapshot
+                        if (snapshot.hasChild("userId")) {
+                            order.setUserId(snapshot.child("userId").getValue(String.class));
                         }
-                        order.setItems(itemsMap);
-                    }
-
-                    // Display order information
-                    displayOrderInfo(order);
-                    displayCustomerInfo(order);
-                    displayOrderItems(order);
-                    
-                    if (isAdmin) {
-                        binding.adminActionsContainer.setVisibility(View.VISIBLE);
+                        
+                        if (snapshot.hasChild("userName")) {
+                            order.setUserName(snapshot.child("userName").getValue(String.class));
+                        }
+                        
+                        if (snapshot.hasChild("userPhone")) {
+                            order.setUserPhone(snapshot.child("userPhone").getValue(String.class));
+                        }
+                        
+                        if (snapshot.hasChild("userEmail")) {
+                            order.setUserEmail(snapshot.child("userEmail").getValue(String.class));
+                        }
+                        
+                        if (snapshot.hasChild("address")) {
+                            order.setAddress(snapshot.child("address").getValue(String.class));
+                        }
+                        
+                        if (snapshot.hasChild("orderDate")) {
+                            order.setOrderDate(snapshot.child("orderDate").getValue(String.class));
+                        }
+                        
+                        if (snapshot.hasChild("totalAmount")) {
+                            Double amount = snapshot.child("totalAmount").getValue(Double.class);
+                            order.setTotalAmount(amount != null ? amount : 0);
+                        }
+                        
+                        if (snapshot.hasChild("status")) {
+                            order.setStatus(snapshot.child("status").getValue(String.class));
+                        }
+                        
+                        if (snapshot.hasChild("paymentMethod")) {
+                            order.setPaymentMethod(snapshot.child("paymentMethod").getValue(String.class));
+                        }
+                        
+                        if (snapshot.hasChild("note")) {
+                            order.setNote(snapshot.child("note").getValue(String.class));
+                        }
+                        
+                        if (snapshot.hasChild("timestamp")) {
+                            Long timestamp = snapshot.child("timestamp").getValue(Long.class);
+                            order.setTimestamp(timestamp != null ? timestamp : 0);
+                        }
+                        
+                        // Xử lý đặc biệt cho trường items vì có thể là ArrayList hoặc Map
+                        if (snapshot.hasChild("items") || snapshot.hasChild("cartItems")) {
+                            DataSnapshot itemsSnapshot = snapshot.hasChild("cartItems") ? 
+                                snapshot.child("cartItems") : snapshot.child("items");
+                            
+                            Map<String, CartItem> itemsMap = new HashMap<>();
+                            
+                            for (DataSnapshot itemSnapshot : itemsSnapshot.getChildren()) {
+                                try {
+                                    CartItem item = new CartItem();
+                                    
+                                    // Lấy các trường dữ liệu của CartItem
+                                    if (itemSnapshot.hasChild("productId")) {
+                                        item.setProductId(itemSnapshot.child("productId").getValue());
+                                    } else if (itemSnapshot.hasChild("id")) {
+                                        item.setProductId(itemSnapshot.child("id").getValue());
+                                    }
+                                    
+                                    if (itemSnapshot.hasChild("title")) {
+                                        item.setTitle(itemSnapshot.child("title").getValue(String.class));
+                                    }
+                                    
+                                    if (itemSnapshot.hasChild("price")) {
+                                        Double price = itemSnapshot.child("price").getValue(Double.class);
+                                        item.setPrice(price != null ? price : 0);
+                                    }
+                                    
+                                    if (itemSnapshot.hasChild("quantity")) {
+                                        Integer quantity = itemSnapshot.child("quantity").getValue(Integer.class);
+                                        item.setQuantity(quantity != null ? quantity : 0);
+                                    }
+                                    
+                                    if (itemSnapshot.hasChild("picUrl") || itemSnapshot.hasChild("imagePath")) {
+                                        String imageUrl = itemSnapshot.hasChild("picUrl") ? 
+                                            itemSnapshot.child("picUrl").getValue(String.class) : 
+                                            itemSnapshot.child("imagePath").getValue(String.class);
+                                        item.setPicUrl(imageUrl);
+                                    }
+                                    
+                                    // Thêm vào Map với key là productId
+                                    String itemId = item.getProductId();
+                                    if (itemId != null) {
+                                        itemsMap.put(itemId, item);
+                                    }
+                                } catch (Exception e) {
+                                    Log.e("CART_ITEM_CONVERT", "Lỗi chuyển đổi CartItem: " + e.getMessage());
+                                }
+                            }
+                            
+                            order.setItems(itemsMap);
+                            order.setCartItems(itemsMap); // Đảm bảo cả hai trường đều được thiết lập
+                        }
+                        
+                        // Hiển thị thông tin đơn hàng
+                        displayOrderInfo(order);
+                        
+                        // Hiển thị thông tin khách hàng
+                        displayCustomerInfo(order);
+                        
+                        // Hiển thị danh sách sản phẩm
+                        displayOrderItems(order);
+                        
+                        // Thiết lập các hành động dành cho admin
                         setupAdminActions(order);
+                    } catch (Exception e) {
+                        Log.e("ORDER_DETAIL", "Lỗi: " + e.getMessage());
+                        Toast.makeText(OrderDetailActivity.this, 
+                            "Lỗi khi xử lý dữ liệu đơn hàng: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                } catch (Exception e) {
-                    Log.e("ORDER_DETAIL", "Error loading order: " + e.getMessage());
-                    Toast.makeText(OrderDetailActivity.this, 
-                        "Lỗi khi tải thông tin đơn hàng", Toast.LENGTH_SHORT).show();
                 }
             }
-
+            
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(OrderDetailActivity.this, "Lỗi: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                finish();
+                // ...existing code...
             }
         });
     }
@@ -317,36 +444,87 @@ public class OrderDetailActivity extends AppCompatActivity {
         LinearLayout container = binding.orderItemsContainer;
         container.removeAllViews();
         
+        // Ghi log để theo dõi
+        Log.d("ORDER_ITEMS", "Đang hiển thị sản phẩm trong đơn hàng: " + order.getOrderId());
+        
         Map<String, CartItem> items = order.getCartItems();
         double totalAmount = 0;
         
         if (items != null && !items.isEmpty()) {
+            Log.d("ORDER_ITEMS", "Số sản phẩm: " + items.size());
+            
             for (CartItem item : items.values()) {
-                View itemView = LayoutInflater.from(this)
-                    .inflate(R.layout.item_order_detail, container, false);
+                try {
+                    if (item == null) {
+                        Log.e("ORDER_ITEMS", "Item is null");
+                        continue;
+                    }
                     
-                TextView nameTxt = itemView.findViewById(R.id.productNameTxt);
-                TextView quantityTxt = itemView.findViewById(R.id.productQuantityTxt);
-                TextView priceTxt = itemView.findViewById(R.id.productPriceTxt);
-                
-                nameTxt.setText(item.getTitle());
-                quantityTxt.setText("x" + item.getQuantity());
-                priceTxt.setText(formatter.format(item.getTotalPrice()) + " đ");
-                
-                container.addView(itemView);
-                
-                totalAmount += item.getTotalPrice();
+                    View itemView = LayoutInflater.from(this)
+                        .inflate(R.layout.item_order_detail, container, false);
+                        
+                    ImageView productImageView = itemView.findViewById(R.id.productImageView);
+                    TextView nameTxt = itemView.findViewById(R.id.productNameTxt);
+                    TextView quantityTxt = itemView.findViewById(R.id.productQuantityTxt);
+                    TextView priceTxt = itemView.findViewById(R.id.productPriceTxt);
+                    
+                    // Hiển thị thông tin cơ bản ngay cả khi có lỗi
+                    nameTxt.setText(item.getTitle() != null ? item.getTitle() : "Không có tên");
+                    quantityTxt.setText("x" + item.getQuantity());
+                    
+                    // Định dạng và hiển thị giá
+                    double itemTotal = item.getPrice() * item.getQuantity();
+                    priceTxt.setText(formatter.format(itemTotal) + " đ");
+                    
+                    // Tải ảnh sản phẩm nếu có
+                    String imageUrl = item.getPicUrl();
+                    if (imageUrl != null && !imageUrl.isEmpty()) {
+                        Log.d("ORDER_ITEMS", "Đang tải ảnh: " + imageUrl);
+                        
+                        Glide.with(this)
+                            .load(imageUrl)
+                            .placeholder(R.drawable.grey_button_bg)
+                            .error(R.drawable.grey_button_bg)
+                            .into(productImageView);
+                    } else {
+                        Log.d("ORDER_ITEMS", "Không có URL ảnh cho sản phẩm: " + item.getTitle());
+                    }
+                    
+                    container.addView(itemView);
+                    
+                    totalAmount += itemTotal;
+                } catch (Exception e) {
+                    Log.e("ORDER_ITEMS", "Lỗi khi hiển thị sản phẩm: " + e.getMessage());
+                }
             }
+        } else {
+            Log.e("ORDER_ITEMS", "Không có sản phẩm trong đơn hàng");
+            
+            // Hiển thị thông báo nếu không có sản phẩm
+            TextView emptyView = new TextView(this);
+            emptyView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+            emptyView.setText("Không có thông tin sản phẩm");
+            emptyView.setTextColor(getResources().getColor(R.color.grey));
+            emptyView.setPadding(0, 16, 0, 16);
+            container.addView(emptyView);
         }
         
         // Hiển thị tổng tiền
         binding.subtotalTextView.setText(formatter.format(totalAmount) + " đ");
+        
+        // Sử dụng tổng tiền từ đơn hàng nếu có
+        double finalTotal = totalAmount;
+        if (order.getTotalAmount() > 0 && totalAmount == 0) {
+            finalTotal = order.getTotalAmount() - 15000; // Trừ phí ship
+        }
         
         // Giả sử phí ship cố định là 15,000đ
         double shippingFee = 15000;
         binding.shippingFeeTextView.setText(formatter.format(shippingFee) + " đ");
         
         // Tổng thanh toán
-        binding.totalPaymentTextView.setText(formatter.format(totalAmount + shippingFee) + " đ");
+        binding.totalPaymentTextView.setText(formatter.format(finalTotal + shippingFee) + " đ");
     }
 }

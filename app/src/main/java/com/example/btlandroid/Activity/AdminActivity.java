@@ -14,9 +14,11 @@ import com.example.btlandroid.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+// để quản lý các chức năng của admin trong ứng dụng
+// bao gồm quản lý sản phẩm, đơn hàng, người dùng và thống kê thu nhập
 public class AdminActivity extends AppCompatActivity {
 
-    private CardView manageProductsButton, manageOrdersButton, manageUsersButton;
+    private CardView manageProductsButton, manageOrdersButton, manageUsersButton, incomeStatisticsButton;
     private ImageView imageViewHome, imageViewProfile, imageViewLogout;
     private TextView adminEmailTextView;
     private FirebaseAuth mAuth;
@@ -33,6 +35,7 @@ public class AdminActivity extends AppCompatActivity {
         manageProductsButton = findViewById(R.id.manageProductsButton);
         manageOrdersButton = findViewById(R.id.manageOrdersButton);
         manageUsersButton = findViewById(R.id.manageUsersButton);
+        incomeStatisticsButton = findViewById(R.id.incomeStatisticsButton);
         
         imageViewHome = findViewById(R.id.imageViewHome);
         imageViewProfile = findViewById(R.id.imageViewProfile);
@@ -70,6 +73,16 @@ public class AdminActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Chuyển đến trang quản lý người dùng
                 Intent intent = new Intent(AdminActivity.this, UserManagementActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // Thêm xử lý sự kiện cho nút thống kê thu nhập
+        incomeStatisticsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Chuyển đến trang thống kê thu nhập
+                Intent intent = new Intent(AdminActivity.this, IncomeStatisticsActivity.class);
                 startActivity(intent);
             }
         });

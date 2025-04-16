@@ -30,6 +30,8 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 
+// Lớp ChatActivity dùng để hiển thị giao diện trò chuyện giữa hai người dùng
+// và xử lý các chức năng như gửi tin nhắn, tải ảnh lên, hiển thị thông tin người dùng.
 public class ChatActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private ActivityChatBinding binding;
@@ -153,7 +155,8 @@ public class ChatActivity extends AppCompatActivity {
         super.onPause();
         updateUserActiveStatus(false);
     }
-
+    // Cập nhật trạng thái hoạt động của người dùng
+    // Nếu người dùng đang online, lưu thời gian hiện tại vào trường lastActive
     private void updateUserActiveStatus(boolean isOnline) {
         if (currentUserId != null) {
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users")
@@ -167,6 +170,9 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    // Tải thông tin người dùng từ Firebase 
+    // Hiển thị tên và ảnh đại diện của người dùng
+    // Cập nhật trạng thái online/offline của người dùng
     private void loadUserInfo() {
         userRef = FirebaseDatabase.getInstance().getReference("Users")
                 .child(otherUserId);
@@ -215,6 +221,8 @@ public class ChatActivity extends AppCompatActivity {
         userRef.addValueEventListener(userInfoListener);
     }
 
+    // Tải tin nhắn từ Firebase
+    // Lắng nghe sự thay đổi dữ liệu trong chatRef và cập nhật danh sách tin nhắn
     private void loadMessages() {
         String chatRoomId = getChatRoomId(currentUserId, otherUserId);
         chatRef = FirebaseDatabase.getInstance().getReference("Chats").child(chatRoomId);
@@ -243,6 +251,8 @@ public class ChatActivity extends AppCompatActivity {
         chatRef.addValueEventListener(messagesListener);
     }
 
+    // Gửi tin nhắn từ EditText
+    // Nếu tin nhắn không rỗng, tạo một Message mới và lưu vào Firebase
     private void sendMessage() {
         String content = binding.messageEditText.getText().toString().trim();
         if (TextUtils.isEmpty(content)) return;
@@ -267,6 +277,8 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    // Tạo ID phòng chat dựa trên ID của hai người dùng
+    // Đảm bảo ID phòng chat là duy nhất và không bị trùng lặp
     private String getChatRoomId(String user1, String user2) {
         if (user1.compareTo(user2) > 0) {
             return user1 + "_" + user2;
@@ -275,6 +287,8 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    // Xóa listener khi Activity bị hủy để tránh rò rỉ bộ nhớ
+    // Nếu có listener đang hoạt động, xóa nó để không còn lắng nghe sự thay đổi dữ liệu nữa
     @Override
     protected void onDestroy() {
         super.onDestroy();

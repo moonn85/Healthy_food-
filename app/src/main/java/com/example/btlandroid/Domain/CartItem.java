@@ -15,6 +15,10 @@ public class CartItem implements Serializable {
     private String id;          // For Firebase mapping
     private String imagePath;   // For Firebase mapping
 
+    // Add missing fields that Firebase expects
+    private double itemTotal;
+    private int star;
+
     // No-args constructor cho Firebase
     public CartItem() {
     }
@@ -35,9 +39,16 @@ public class CartItem implements Serializable {
         return productId;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
-        this.id = productId; // Keep productId and id in sync
+    // Chỉ giữ một phương thức setter cho productId
+    public void setProductId(Object productId) {
+        if (productId instanceof Long) {
+            this.productId = String.valueOf(productId);
+        } else if (productId instanceof String) {
+            this.productId = (String) productId;
+        } else if (productId != null) {
+            this.productId = String.valueOf(productId);
+        }
+        this.id = this.productId; // Đồng bộ với id
     }
 
     public String getTitle() {
@@ -95,9 +106,16 @@ public class CartItem implements Serializable {
         return productId; // Return productId as id
     }
 
-    public void setId(String id) {
-        this.id = id;
-        this.productId = id; // Keep productId and id in sync
+    // Chỉ giữ một phương thức setter cho id
+    public void setId(Object id) {
+        if (id instanceof Long) {
+            this.id = String.valueOf(id);
+        } else if (id instanceof String) {
+            this.id = (String) id;
+        } else if (id != null) {
+            this.id = String.valueOf(id);
+        }
+        this.productId = this.id; // Đồng bộ với productId
     }
 
     public String getImagePath() {
@@ -107,5 +125,22 @@ public class CartItem implements Serializable {
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
         this.picUrl = imagePath; // Keep picUrl and imagePath in sync
+    }
+
+    // Add getters and setters for new fields
+    public double getItemTotal() {
+        return itemTotal;
+    }
+    
+    public void setItemTotal(double itemTotal) {
+        this.itemTotal = itemTotal;
+    }
+    
+    public int getStar() {
+        return star;
+    }
+    
+    public void setStar(int star) {
+        this.star = star;
     }
 }

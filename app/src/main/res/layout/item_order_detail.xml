@@ -3,31 +3,44 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:paddingVertical="8dp">
 
-    <TextView
-        android:id="@+id/productNameTxt"
+    <ImageView
+        android:id="@+id/productImageView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="centerCrop"
+        android:background="@color/grey" />
+
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Tên sản phẩm"
-        android:textColor="@color/white"
-        android:textSize="14sp" />
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/productNameTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:text="Tên sản phẩm" />
+
+        <TextView
+            android:id="@+id/productPriceTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@color/green"
+            android:text="0 đ" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/productQuantityTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="x1"
+        android:textSize="14sp"
         android:textColor="@color/white"
-        android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/productPriceTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="15,000 đ"
-        android:textColor="@color/white"
-        android:textSize="14sp" />
+        android:text="x1" />
 </LinearLayout>

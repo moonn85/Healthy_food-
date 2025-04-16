@@ -26,6 +26,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+// để hiển thị danh sách sản phẩm yêu thích của người dùng
+// sử dụng Firebase để lưu trữ thông tin yêu thích
 public class FavoriteActivity extends AppCompatActivity implements FavoriteAdapter.OnItemRemovedListener {
 
     private RecyclerView favoriteRecyclerView;

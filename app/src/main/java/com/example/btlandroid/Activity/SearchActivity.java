@@ -27,12 +27,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+// để hiển thị danh sách sản phẩm theo từ khóa tìm kiếm
+// sử dụng Firebase Realtime Database để lưu trữ thông tin sản phẩm
 public class SearchActivity extends AppCompatActivity {
     private ActivitySearchBinding binding;
     private BestdealAdapter adapter;
     private ArrayList<ItemDomain> itemList = new ArrayList<>();
     private ArrayList<ItemDomain> filteredList = new ArrayList<>();
     
+    // khởi tạo các biến cho danh sách sản phẩm, bộ lọc và sắp xếp
     private String[] categories = {"Tất cả", "Rau", "Hoa quả", "Sữa", "Đồ uống", "Hạt"};
     private String[] sortOptions = {"Mặc định", "Giá tăng dần", "Giá giảm dần", "Đánh giá cao nhất"};
     private String currentCategory = "Tất cả";
@@ -51,7 +54,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void setupViews() {
-        // Setup RecyclerView
+        // để hiển thị danh sách sản phẩm
         adapter = new BestdealAdapter(filteredList);
         binding.searchRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         binding.searchRecyclerView.setAdapter(adapter);
@@ -106,7 +109,7 @@ public class SearchActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // Price range filter
+        // để cập nhật giá trị minPrice và maxPrice từ EditText
         binding.applyFilterBtn.setOnClickListener(v -> {
             try {
                 String minPriceStr = binding.minPriceEditText.getText().toString();
@@ -133,7 +136,8 @@ public class SearchActivity extends AppCompatActivity {
             filterItems();
         });
     }
-
+     
+    // để tải tất cả sản phẩm từ Firebase Realtime Database
     private void loadAllItems() {
         DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("Items");
         
@@ -161,21 +165,22 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
+    // xử lý tìm kiếm và lọc
     private void filterItems() {
         filteredList.clear();
         String searchText = binding.searchEditText.getText().toString().toLowerCase();
         
-        // Apply filters
+        // Áp dụng bộ lọc cho danh sách sản phẩm
         for (ItemDomain item : itemList) {
             if (matchesFilters(item, searchText)) {
                 filteredList.add(item);
             }
         }
         
-        // Apply sorting
+        // Áp dụng sắp xếp cho danh sách đã lọc
         sortFilteredList();
         
-        // Update UI
+        // Cập nhật giao diện người dùng
         if (filteredList.isEmpty()) {
             binding.noResultsText.setVisibility(View.VISIBLE);
             binding.searchRecyclerView.setVisibility(View.GONE);
@@ -190,20 +195,21 @@ public class SearchActivity extends AppCompatActivity {
     private boolean matchesFilters(ItemDomain item, String searchText) {
         if (item == null) return false;
         
-        // Text search
+        // Tìm kiếm theo tiêu đề và mô tả
         boolean matchesSearch = item.getTitle() != null && item.getTitle().toLowerCase().contains(searchText) ||
                               item.getDescription() != null && item.getDescription().toLowerCase().contains(searchText);
         
-        // Category filter with null check
+        // Lọc theo danh mục
         boolean matchesCategory = currentCategory.equals("Tất cả") || 
                                 (item.getCategory() != null && item.getCategory().equals(currentCategory));
         
-        // Price range filter
+        // Lọc theo giá
         boolean matchesPrice = item.getPrice() >= minPrice && item.getPrice() <= maxPrice;
         
         return matchesSearch && matchesCategory && matchesPrice;
     }
-
+ 
+    // để sắp xếp danh sách đã lọc theo các tiêu chí khác nhau
     private void sortFilteredList() {
         switch (currentSort) {
             case "Giá tăng dần":

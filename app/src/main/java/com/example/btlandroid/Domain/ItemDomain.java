@@ -8,7 +8,7 @@ public class ItemDomain implements Serializable {
     private String Description;
     private double Price;
     private double Star;
-    private int Id;
+    private long Id;  // Changed from int to long
     private int CategoryId;
     private int LocationId;
     private String category = "Tất cả";  // Initialize with default value
@@ -57,11 +57,11 @@ public class ItemDomain implements Serializable {
         Star = star;
     }
 
-    public int getId() {
+    public long getId() {  // Changed return type from int to long
         return Id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {  // Changed parameter type from int to long
         Id = id;
     }
 
@@ -89,7 +89,7 @@ public class ItemDomain implements Serializable {
         this.category = category;  
     }
 
-    // Add this method to get productId as String (converting from int id)
+    // Add this method to get productId as String (converting from long id)
     public String getProductId() {
         return String.valueOf(Id);
     }

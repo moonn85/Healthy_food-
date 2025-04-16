@@ -91,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    // Kiểm tra xem người dùng đã đăng nhập hay chưa
     private void loginUser(String email, String password, boolean isAdmin) {
         binding.progressBar.setVisibility(View.VISIBLE);
 

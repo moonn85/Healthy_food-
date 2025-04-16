@@ -3,6 +3,8 @@ package com.example.btlandroid.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,12 +30,17 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DecimalFormat;
 import android.widget.Toast;
 
+// để hiển thị thông tin chi tiết sản phẩm
+// sử dụng Firebase để lưu trữ thông tin giỏ hàng và danh sách yêu thích
 public class DetailActivity extends AppCompatActivity {
     private ActivityDetailBinding binding;
     private ItemDomain item;
-    private int quantity = 1;
+    private int quantity = 1; // Biến lưu số lượng sản phẩm
     private FirebaseUser currentUser;
     private boolean isFavorite = false;
+    private ImageButton btnMinus, btnPlus;
+    private TextView quantityTxt, totalPriceTxt;
+    private DecimalFormat formatter; // Định dạng số để hiển thị giá tiền
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +50,54 @@ public class DetailActivity extends AppCompatActivity {
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         
+        // Khởi tạo formatter để định dạng tiền tệ
+        formatter = new DecimalFormat("#,###");
+        
+        // Khai báo và khởi tạo các phần tử UI mới
+        setupQuantityControls();
+        
         getIntentExtraData();
         setVariable();
         checkFavoriteStatus();
     }
 
+    /**
+     * Khởi tạo và xử lý các thành phần điều khiển số lượng
+     */
+    private void setupQuantityControls() {
+        btnMinus = findViewById(R.id.btnMinus);
+        btnPlus = findViewById(R.id.btnPlus);
+        quantityTxt = findViewById(R.id.quantityTxt);
+        totalPriceTxt = findViewById(R.id.totalPriceTxt);
+        
+        // Xử lý sự kiện nút giảm số lượng
+        btnMinus.setOnClickListener(v -> {
+            if (quantity > 1) {
+                quantity--;
+                updateQuantityAndTotal();
+            }
+        });
+        
+        // Xử lý sự kiện nút tăng số lượng
+        btnPlus.setOnClickListener(v -> {
+            quantity++;
+            updateQuantityAndTotal();
+        });
+    }
+    
+    /**
+     * Cập nhật hiển thị số lượng và tổng tiền
+     */
+    private void updateQuantityAndTotal() {
+        if (quantityTxt != null) {
+            quantityTxt.setText(String.valueOf(quantity));
+        }
+        
+        calculateTotalPrice();
+    }
+
+    // Nhận dữ liệu từ Intent và hiển thị thông tin sản phẩm
+    // Sử dụng DecimalFormat để định dạng giá tiền
     private void getIntentExtraData() {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("item")) {
@@ -75,6 +125,11 @@ public class DetailActivity extends AppCompatActivity {
                     .into(binding.productImage);
             }
         }
+        
+        // Sau khi lấy dữ liệu item, cập nhật tổng tiền ban đầu
+        if (item != null) {
+            calculateTotalPrice();
+        }
     }
 
     private void setVariable() {
@@ -95,9 +150,14 @@ public class DetailActivity extends AppCompatActivity {
         // Removed references to missing binding elements to fix compilation errors
     }
 
+    /**
+     * Tính và hiển thị tổng tiền dựa trên số lượng
+     */
     private void calculateTotalPrice() {
-        double totalPrice = quantity * item.getPrice();
-        binding.priceTxt.setText(totalPrice + " đ");
+        if (item != null && totalPriceTxt != null) {
+            double totalPrice = quantity * item.getPrice();
+            totalPriceTxt.setText("Tổng: " + formatter.format(totalPrice) + " đ");
+        }
     }
 
     /**
@@ -119,45 +179,65 @@ public class DetailActivity extends AppCompatActivity {
 
         binding.addToCartBtn.setEnabled(false);
 
-        // Tạo đối tượng CartItem mới
+        // Xử lý chuyển đổi ID sản phẩm từ Long sang String
+        String productId;
+        Object idObj = item.getId();
+        
+        if (idObj instanceof Long) {
+            productId = String.valueOf(((Long) idObj).longValue());
+        } else if (idObj instanceof Integer) {
+            productId = String.valueOf(((Integer) idObj).intValue());
+        } else {
+            productId = String.valueOf(idObj);
+        }
+
+        // Tạo đối tượng CartItem với ID đã được xử lý
         CartItem cartItem = new CartItem(
-                String.valueOf(item.getId()), // Convert the int id to String for productId
+                productId,
                 item.getTitle(),
                 item.getPrice(),
                 item.getImagePath(),
-                quantity
+                quantity // Sử dụng số lượng đã chọn
         );
 
         // Lấy reference đến node giỏ hàng của người dùng
+        // SỬA: Sử dụng productId thay vì String.valueOf(item.getId())
         DatabaseReference cartRef = FirebaseDatabase.getInstance()
                 .getReference("Cart")
                 .child(currentUser.getUid())
-                .child(String.valueOf(item.getId())); // Use getId() instead of getProductId()
+                .child(productId); // Sử dụng productId đã được xử lý
 
         // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
         cartRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    // Nếu sản phẩm đã tồn tại, cập nhật số lượng
-                    CartItem existingItem = snapshot.getValue(CartItem.class);
-                    if (existingItem != null) {
-                        existingItem.setQuantity(existingItem.getQuantity() + quantity);
-                        cartRef.setValue(existingItem).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                handleCartResult(task);
-                            }
-                        });
+                    // Thay vì dùng getValue(), lấy các giá trị riêng lẻ để tránh lỗi chuyển đổi
+                    try {
+                        // Lấy từng thuộc tính riêng lẻ
+                        String id = snapshot.child("productId").getValue(String.class);
+                        String title = snapshot.child("title").getValue(String.class);
+                        Double price = snapshot.child("price").getValue(Double.class);
+                        String image = snapshot.child("imagePath").getValue(String.class);
+                        Integer currentQuantity = snapshot.child("quantity").getValue(Integer.class);
+
+                        // Tạo đối tượng CartItem mới và thiết lập các thuộc tính
+                        CartItem existingItem = new CartItem();
+                        existingItem.setProductId(id != null ? id : productId);
+                        existingItem.setTitle(title != null ? title : item.getTitle());
+                        existingItem.setPrice(price != null ? price : item.getPrice());
+                        existingItem.setImagePath(image != null ? image : item.getImagePath());
+                        existingItem.setQuantity((currentQuantity != null ? currentQuantity : 0) + quantity);
+
+                        // Cập nhật vào database
+                        cartRef.setValue(existingItem).addOnCompleteListener(task -> handleCartResult(task));
+                    } catch (Exception e) {
+                        // Nếu có lỗi khi parse dữ liệu, thêm mới sản phẩm
+                        cartRef.setValue(cartItem).addOnCompleteListener(task -> handleCartResult(task));
                     }
                 } else {
                     // Nếu sản phẩm chưa tồn tại, thêm mới
-                    cartRef.setValue(cartItem).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            handleCartResult(task);
-                        }
-                    });
+                    cartRef.setValue(cartItem).addOnCompleteListener(task -> handleCartResult(task));
                 }
             }
 
@@ -184,9 +264,21 @@ public class DetailActivity extends AppCompatActivity {
     private void checkFavoriteStatus() {
         if (currentUser == null || item == null) return;
 
+        // Xử lý chuyển đổi ID sản phẩm từ Long sang String cho tham chiếu Firebase
+        String productId;
+        Object idObj = item.getId();
+        
+        if (idObj instanceof Long) {
+            productId = String.valueOf(((Long) idObj).longValue());
+        } else if (idObj instanceof Integer) {
+            productId = String.valueOf(((Integer) idObj).intValue());
+        } else {
+            productId = String.valueOf(idObj);
+        }
+
         DatabaseReference favoriteRef = FirebaseDatabase.getInstance().getReference("Favorites")
                 .child(currentUser.getUid())
-                .child(String.valueOf(item.getId())); // Use getId() instead of getProductId()
+                .child(productId); // Sử dụng productId đã được xử lý thay vì String.valueOf(item.getId())
 
         favoriteRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -202,15 +294,31 @@ public class DetailActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Chuyển đổi trạng thái yêu thích của sản phẩm
+     * Nếu đã yêu thích thì xóa khỏi danh sách yêu thích, ngược lại thì thêm vào
+     */
     private void toggleFavorite() {
         if (currentUser == null) {
             Toast.makeText(this, "Vui lòng đăng nhập để thêm vào yêu thích", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Xử lý chuyển đổi ID sản phẩm từ Long sang String
+        String productId;
+        Object idObj = item.getId();
+        
+        if (idObj instanceof Long) {
+            productId = String.valueOf(((Long) idObj).longValue());
+        } else if (idObj instanceof Integer) {
+            productId = String.valueOf(((Integer) idObj).intValue());
+        } else {
+            productId = String.valueOf(idObj);
+        }
+
         DatabaseReference favoriteRef = FirebaseDatabase.getInstance().getReference("Favorites")
                 .child(currentUser.getUid())
-                .child(String.valueOf(item.getId())); // Use getId() instead of getProductId()
+                .child(productId); // Sử dụng productId đã được xử lý
         
         if (isFavorite) {
             // Remove from favorites
@@ -224,12 +332,9 @@ public class DetailActivity extends AppCompatActivity {
                 }
             });
         } else {
-            // Modify this part to correctly create the FavoriteItem object
-            // First let's create a variable to hold the ID as String
-            String productIdStr = String.valueOf(item.getId());
-            
+            // Tạo đối tượng FavoriteItem với ID đã được xử lý
             FavoriteItem favoriteItem = new FavoriteItem(
-                productIdStr,  // Use the String variable instead of direct conversion
+                productId,  // Sử dụng productId đã được xử lý
                 item.getTitle(),
                 item.getPrice(),
                 item.getImagePath(),
@@ -256,5 +361,28 @@ public class DetailActivity extends AppCompatActivity {
         if (item == null) {
             getIntentExtraData();
         }
+    }
+
+    // Thêm các phương thức trợ giúp
+    private String safeGetString(DataSnapshot snapshot, String key, String defaultValue) {
+        Object value = snapshot.child(key).getValue();
+        return value != null ? value.toString() : defaultValue;
+    }
+
+    
+    private double safeGetDouble(DataSnapshot snapshot, String key, double defaultValue) {
+        Object value = snapshot.child(key).getValue();
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        }
+        return defaultValue;
+    }
+
+    private int safeGetInt(DataSnapshot snapshot, String key, int defaultValue) {
+        Object value = snapshot.child(key).getValue();
+        if (value instanceof Number) {
+            return ((Number) value).intValue();
+        }
+        return defaultValue;
     }
 }

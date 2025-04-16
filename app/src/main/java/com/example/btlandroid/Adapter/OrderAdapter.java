@@ -23,6 +23,7 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
+// Lớp OrderAdapter để hiển thị danh sách đơn hàng trong ứng dụng Android
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
     private List<OrderDomain> orderList;
     private Context context;

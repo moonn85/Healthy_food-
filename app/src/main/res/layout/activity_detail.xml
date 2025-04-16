@@ -126,6 +126,71 @@
                 android:textColor="#CCCCCC"
                 android:textSize="14sp"
                 android:lineSpacingMultiplier="1.2" />
+                
+            <!-- Thêm phần chọn số lượng sản phẩm -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+                
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Số lượng"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+                    
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="@color/black3"
+                    android:padding="8dp"
+                    android:layout_marginBottom="8dp">
+                    
+                    <ImageButton
+                        android:id="@+id/btnMinus"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@drawable/ic_minus"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Giảm số lượng" />
+                        
+                    <TextView
+                        android:id="@+id/quantityTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:minWidth="24dp"
+                        android:gravity="center" />
+                        
+                    <ImageButton
+                        android:id="@+id/btnPlus"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@drawable/ic_plus"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Tăng số lượng" />
+                </LinearLayout>
+                
+                <TextView
+                    android:id="@+id/totalPriceTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tổng: 10.000 VNĐ"
+                    android:textColor="#4CAF50"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

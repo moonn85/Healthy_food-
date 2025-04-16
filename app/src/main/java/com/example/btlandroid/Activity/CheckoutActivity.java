@@ -30,6 +30,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+
+// để hiển thị thông tin thanh toán và xử lý đặt hàng
+// sử dụng Firebase để lưu trữ thông tin đơn hàng và giỏ hàng
 public class CheckoutActivity extends AppCompatActivity {
 
     private ActivityCheckoutBinding binding;

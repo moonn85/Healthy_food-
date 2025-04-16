@@ -28,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
+// Đây là một Activity trong ứng dụng Android cho phép người dùng đăng ký tài khoản mới bằng email và mật khẩu hoặc thông qua tài khoản Google.
 public class RegisterActivity extends AppCompatActivity {
     private ActivityRegisterBinding binding;
     private FirebaseAuth mAuth;
@@ -120,6 +121,7 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
+    // Xử lý đăng nhập bằng Google
     private void signInWithGoogle() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -143,6 +145,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
+    // Xác thực với Firebase bằng token từ Google Sign In
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)

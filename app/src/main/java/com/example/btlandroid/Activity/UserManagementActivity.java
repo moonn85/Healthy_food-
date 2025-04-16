@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// để quản lý người dùng trong ứng dụng
+// sử dụng Firebase Realtime Database để lưu trữ thông tin người dùng
 public class UserManagementActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;

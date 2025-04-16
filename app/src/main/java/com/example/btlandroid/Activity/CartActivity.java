@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.btlandroid.Adapter.CartAdapter;
 import com.example.btlandroid.Domain.CartItem;
 import com.example.btlandroid.R;
-import com.example.btlandroid.Utils.BottomNavigationUtils; // Ensure this import is present
+import com.example.btlandroid.Utils.BottomNavigationUtils; 
 import com.example.btlandroid.Utils.ToastUtils;
 import com.example.btlandroid.databinding.ActivityCartBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,6 +27,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+// để hiển thị giỏ hàng của người dùng trong ứng dụng Android
+// sử dụng Firebase Realtime Database để lưu trữ thông tin giỏ hàng
 public class CartActivity extends AppCompatActivity implements CartAdapter.OnCartUpdateListener {
 
     private ActivityCartBinding binding;
@@ -85,10 +87,11 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         // Thiết lập sự kiện cho thanh điều hướng dưới cùng
         BottomNavigationUtils.setupBottomNavigation(this, R.id.cartNav);
     }
-
+    // Phương thức này sẽ được gọi khi giỏ hàng thay đổi từ adapter
     private void loadCartItems() {
         binding.progressBar.setVisibility(View.VISIBLE);
 
+    
         cartRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

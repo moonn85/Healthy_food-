@@ -116,6 +116,8 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    // Cập nhật thông tin người dùng trong Firebase
+    // Nếu có ảnh mới, tải lên và cập nhật URL ảnh mới
     private void updateProfile(String name, String imageUrl) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("name", name);

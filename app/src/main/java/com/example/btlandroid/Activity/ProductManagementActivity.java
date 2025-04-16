@@ -25,6 +25,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+// để quản lý sản phẩm trong ứng dụng
+// sử dụng Firebase Realtime Database để lưu trữ thông tin sản phẩm
 public class ProductManagementActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -145,7 +147,7 @@ public class ProductManagementActivity extends AppCompatActivity {
         if (locationId == null) return "Không xác định";
         
         switch(locationId) {
-            case 0: return "Singapore";
+            case 0: return "Nước ngoài";
             case 1: return "Việt Nam";
             default: return "Không xác định";
         }

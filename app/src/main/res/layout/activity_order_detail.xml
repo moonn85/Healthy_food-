@@ -273,6 +273,42 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- User Actions Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/userActionsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/black3"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Quản lý đơn hàng"
+                        android:textColor="@color/yellow"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/userCancelBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Hủy đơn hàng"
+                        android:textColor="@color/white"
+                        app:backgroundTint="@color/red"
+                        app:cornerRadius="8dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
             <!-- Admin Actions Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/adminActionsContainer"

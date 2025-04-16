@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.btlandroid.R;
 import com.google.firebase.auth.FirebaseAuth;
 
+
 public class SplashActivity extends AppCompatActivity {
 
     @Override

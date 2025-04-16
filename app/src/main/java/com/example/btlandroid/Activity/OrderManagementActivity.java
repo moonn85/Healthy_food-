@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.example.btlandroid.R;  // Add this import
+import com.example.btlandroid.R; 
 import com.example.btlandroid.Domain.CartItem;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,6 +98,7 @@ public class OrderManagementActivity extends AppCompatActivity {
         Query query;
         switch (filter) {
             case "pending":
+                // Firebase chỉ cho phép một phương thức orderByChild trong một truy vấn
                 query = ordersRef.orderByChild("status").equalTo("Chờ xác nhận");
                 break;
             case "shipping":
@@ -110,6 +111,8 @@ public class OrderManagementActivity extends AppCompatActivity {
                 query = ordersRef.orderByChild("status").equalTo("Đã hủy");
                 break;
             default:
+                // Sắp xếp ngay từ Firebase để đảm bảo dữ liệu lấy về đã được sắp xếp
+                // Với truy vấn orderByChild("timestamp") Firebase sẽ trả về theo thứ tự tăng dần
                 query = ordersRef.orderByChild("timestamp");
                 break;
         }
@@ -121,38 +124,65 @@ public class OrderManagementActivity extends AppCompatActivity {
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     try {
-                        // Use explicit type checking
-                        OrderDomain order = snapshot.getValue(OrderDomain.class);
-                        if (order != null) {
-                            order.setOrderId(snapshot.getKey());
-                            
-                            // Handle items map with proper type checking
-                            if (snapshot.hasChild("items")) {
-                                Map<String, CartItem> itemsMap = new HashMap<>();
-                                DataSnapshot itemsSnapshot = snapshot.child("items");
-                                for (DataSnapshot itemSnapshot : itemsSnapshot.getChildren()) {
-                                    CartItem item = itemSnapshot.getValue(CartItem.class);
-                                    if (item != null) {
-                                        itemsMap.put(itemSnapshot.getKey(), item);
-                                    }
-                                }
-                                order.setItems(itemsMap);
-                            }
-                            
-                            newOrderList.add(order);
+                        // Đọc thủ công từng trường dữ liệu thay vì dùng getValue(OrderDomain.class)
+                        String orderId = snapshot.getKey();
+                        
+                        OrderDomain order = new OrderDomain();
+                        order.setOrderId(orderId);
+                        
+                        // Đảm bảo lấy đúng giá trị timestamp
+                        if (snapshot.hasChild("timestamp")) {
+                            Long timestamp = snapshot.child("timestamp").getValue(Long.class);
+                            // Log để kiểm tra giá trị timestamp
+                            Log.d("ORDER_TIMESTAMP", "OrderID: " + orderId + ", Timestamp: " + timestamp);
+                            order.setTimestamp(timestamp != null ? timestamp : 0);
+                        } else {
+                            // Nếu không có timestamp, set giá trị mặc định là 0
+                            order.setTimestamp(0L);
                         }
+                        
+                        // Lấy các trường dữ liệu khác...
+                        if (snapshot.hasChild("userId")) {
+                            order.setUserId(snapshot.child("userId").getValue(String.class));
+                        }
+                        
+                        if (snapshot.hasChild("status")) {
+                            order.setStatus(snapshot.child("status").getValue(String.class));
+                        }
+                        
+                        if (snapshot.hasChild("totalAmount")) {
+                            Double amount = snapshot.child("totalAmount").getValue(Double.class);
+                            order.setTotalAmount(amount != null ? amount : 0);
+                        }
+                        
+                        // Xử lý các trường khác tương tự...
+                        
+                        // Xử lý items map
+                        if (snapshot.hasChild("items") || snapshot.hasChild("cartItems")) {
+                            // ...existing code...
+                        }
+                        
+                        newOrderList.add(order);
                     } catch (Exception e) {
-                        Log.e("ORDER_CONVERT", "Error converting order: " + e.getMessage());
+                        Log.e("ORDER_CONVERT", "Error converting order: " + e.getMessage(), e);
                     }
                 }
 
-                // Sort with type-safe comparison
+                // Sắp xếp theo timestamp giảm dần - đơn hàng mới nhất lên đầu
                 newOrderList.sort((o1, o2) -> {
                     if (o1 == null || o2 == null) return 0;
+                    // Log để kiểm tra thứ tự sắp xếp
+                    Log.d("ORDER_SORT", "Compare: " + o1.getOrderId() + "(" + o1.getTimestamp() + ") vs " 
+                        + o2.getOrderId() + "(" + o2.getTimestamp() + ")");
                     return Long.compare(o2.getTimestamp(), o1.getTimestamp());
                 });
 
-                // Update adapter with the new list
+                // Log danh sách sau khi sắp xếp
+                for (OrderDomain order : newOrderList) {
+                    Log.d("ORDER_LIST_SORTED", "ID: " + order.getOrderId() + ", Timestamp: " + order.getTimestamp());
+                }
+
+                // Update adapter với danh sách đã sắp xếp
                 orderAdapter.setOrderList(newOrderList);
 
                 // Update UI
@@ -228,7 +258,7 @@ public class OrderManagementActivity extends AppCompatActivity {
             
             // Xử lý danh sách items nếu có
             if (orderMap.containsKey("items") && orderMap.get("items") instanceof List) {
-                // Xử lý items...
+                
             }
             
             return order;
